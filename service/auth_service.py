@@ -6,8 +6,9 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, Depends
 
+from database import get_db
 from model import User
-from schemas import UserRegister, UserResponse, UserLogin, Token, UserInfoGoogle
+from schemas import UserRegister, UserResponse, UserLogin, Token, UserInfoGoogle, TokenData
 from utils import get_password_hash, verify_password, decode_access_token
 from config import GOOGLE_CLIENT_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_REDIRECT_URL
 
@@ -91,7 +92,7 @@ def get_user_info(token: str) -> UserInfoGoogle:
     payload = user_info.json()
     return UserInfoGoogle(**payload)
 
-async def get_current_user(token: Annotated [str, Depends(oauth2_bearer)]):
+async def get_current_user(token: Annotated [str, Depends(oauth2_bearer)], db: Session = Depends(get_db)) -> TokenData:
     if len(token.split('.')) == 3:
         try:
             payload = decode_access_token(token)
@@ -99,10 +100,10 @@ async def get_current_user(token: Annotated [str, Depends(oauth2_bearer)]):
             username = payload.get('username')
             if username is None or user_id is None:
                 raise HTTPException(status_code=401, detail='Could not validate user.')
-            return {
-                'id': user_id,
+            return TokenData(**{
+                'id': str(user_id),
                 'username': username
-            }
+            })
         except JWTError as e:
             if str(e) == 'Signature has expired.':
                 raise HTTPException(status_code=401, detail=str(e))
@@ -112,14 +113,13 @@ async def get_current_user(token: Annotated [str, Depends(oauth2_bearer)]):
         try:
             payload = get_user_info(token)
             email = payload.email
-            user_id = payload.id
+            user = db.query(User).filter(User.email == email).first()
             if email is None:
                 raise HTTPException(status_code=401, detail=f'Could not validate user.')
-            # refresh_token(token)
-            return {
-                    'id': user_id,
-                    'username': email
-                }
+            return TokenData(**{
+                'id': str(user.id),
+                'username': user.username
+            })
         except:
             raise HTTPException(status_code=401, detail=f'Could not validate user.')
 
