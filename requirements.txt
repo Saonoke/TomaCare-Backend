@@ -1,4 +1,12 @@
-fastapi[standard]
-pydantic
-alembic
+fastapi[standard]~=0.115.4
+pydantic~=2.9.2
+pydantic[email]
+alembic~=1.13.3
+sqlmodel~=0.0.22
+python-jose~=3.3.0
+passlib~=1.7.4
+bcrypt==3.2.0
+python-dotenv~=1.0.1
+uvicorn
+requests~=2.32.3
 pymysql
