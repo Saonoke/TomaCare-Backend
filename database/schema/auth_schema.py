@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field, model_validator
+from pydantic import BaseModel, EmailStr, Field
 
 class UserResponse(BaseModel):
     id: int
@@ -27,8 +27,8 @@ class UserRegister(BaseModel):
 
 
 class UserLogin(BaseModel):
-    email: str = Field(
-        examples=['bob@domain.com']
+    email_or_username: str = Field(
+        examples=['bob']
     )
     password: str = Field(
         examples=['Password#1234']

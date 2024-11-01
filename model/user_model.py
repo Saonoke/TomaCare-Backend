@@ -1,11 +1,9 @@
-from sqlalchemy import Column, Integer, String
-from database import Base
+from pydantic import EmailStr
+from sqlmodel import Field, SQLModel, VARCHAR, Column, String
 
-class User(Base):
-    __tablename__ = "users"
-
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String(100), unique=True, index=True)
-    username = Column(String(50), unique=True, index=True)
-    full_name = Column(String(100))
-    password = Column(String(200))
+class Users(SQLModel, table=True):
+    id: int = Field(primary_key=True, sa_column_kwargs={'autoincrement': True})
+    email: EmailStr = Field(sa_column=Column("email", VARCHAR, unique=True), max_length=100)
+    username: str = Field(sa_column=Column("username", VARCHAR, unique=True), max_length=100)
+    full_name: str = Field(max_length=200)
+    password: str = Column(String(200))
