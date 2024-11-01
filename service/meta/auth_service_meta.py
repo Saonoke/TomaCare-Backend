@@ -32,7 +32,3 @@ class AuthServiceMeta:
     @abstractmethod
     def __get_user_info(self, token: str) -> UserInfoGoogle:
         pass
-
-    @abstractmethod
-    async def get_current_user(self, token: Annotated [str, Depends(oauth2_bearer)]) -> TokenData:
-        pass

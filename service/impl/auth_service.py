@@ -1,10 +1,7 @@
 import requests
 
-from typing import Annotated
 from fastapi import Depends, HTTPException
-from jose import JWTError
 from datetime import timedelta
-from fastapi.security import OAuth2PasswordBearer
 
 from database.repository import UserRepositoryMeta, UserRepository
 from database.schema import TokenData, UserInfoGoogle, Token, UserLogin, UserResponse, UserRegister

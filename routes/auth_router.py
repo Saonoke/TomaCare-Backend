@@ -1,8 +1,6 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 from database.schema import Token, UserLogin, UserRegister, UserResponse, TokenData
-from database import get_db
 
 from utils.token_utils import get_current_user
 from controllers.auth_controller import AuthController
@@ -13,8 +11,6 @@ auth_router = APIRouter(
 )
 
 user_dependency = Annotated[TokenData, Depends(get_current_user)]
-db_dependency = Annotated[Session, Depends(get_db)]
-
 
 @auth_router.post("/", response_model=UserResponse)
 async def register_user(user: UserRegister, controller: AuthController = Depends(AuthController)):
