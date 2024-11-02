@@ -27,7 +27,7 @@ def create_access_token(token_data: TokenData, exp_delta: timedelta):
 def decode_access_token(token: str) -> TokenData:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=JWT_ALG)
-        return payload if payload else None
+        return TokenData(**payload) if payload else None
     except JWTError as e:
         raise JWTError(e)
 
