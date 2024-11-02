@@ -1,4 +1,5 @@
 from pydantic import EmailStr
+# from sqlalchemy import Column, Integer, String
 from sqlmodel import Field, SQLModel, VARCHAR, Column, String
 
 class Users(SQLModel, table=True):
@@ -7,3 +8,5 @@ class Users(SQLModel, table=True):
     username: str = Field(sa_column=Column("username", VARCHAR, unique=True), max_length=100)
     full_name: str = Field(max_length=200)
     password: str = Column(String(200))
+
+    profile_img: int | None = Field(default=None, foreign_key="profile_img")
