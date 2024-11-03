@@ -1,9 +1,9 @@
+from fastapi import Request
 from fastapi.responses import JSONResponse
 from jose import JWTError
 from sqlmodel import Session
 from starlette.middleware.base import BaseHTTPMiddleware
 from datetime import datetime, timedelta
-from starlette.responses import RedirectResponse
 
 from config import RATE_LIMIT_REQUESTS, RATE_LIMIT_DURATION
 from database import engine
@@ -51,6 +51,14 @@ class RateLimitingMiddleware(BaseHTTPMiddleware):
 
 
 class AuthMiddleware(BaseHTTPMiddleware):
+    _whitelist_endpoints = [
+        '/docs',
+        '/openapi.json',
+        '/',
+        '/auth',
+        '/auth/token',
+        '/auth/google-url',
+    ]
 
     def __init__(self, app):
         super().__init__(app)
@@ -63,21 +71,37 @@ class AuthMiddleware(BaseHTTPMiddleware):
 
         return authorization_header.replace('Bearer ', '')
 
+    @staticmethod
+    def __get_route(url: str):
+        return f"/{url.split('/', maxsplit=3)[-1]}"
+
+    def __check_whitelist_route(self, request: Request) -> bool:
+        """
+            Will return True when accessing whitelisted route.
+        """
+        if self.__get_route(str(request.url)) in self._whitelist_endpoints:
+            return True
+        return False
+
     async def dispatch(self, request, call_next):
         try:
-            clear_token = self.__get_clear_token(request.headers['authorization'])
+            if self.__check_whitelist_route(request):
+                response = await call_next(request)
+                return response
 
+            clear_token = self.__get_clear_token(request.headers['authorization'])
             payload = decode_access_token(clear_token)
 
             with Session(engine) as session:
                 user = session.get(Users, payload.id)
         except JWTError as e:
+            if str(e) == 'Signature has expired.':
+                return JSONResponse(status_code=401, content={'detail': str(e)})
+        except Exception as e:
             if str(e) == "'authorization'":
                 return JSONResponse(status_code=400, content={
                     'detail': 'Access-token header is not set'
                 })
-            if str(e) == 'Signature has expired.':
-                return JSONResponse(status_code=401, content={'detail': str(e)})
             return JSONResponse(status_code=401, content={'detail':'Could not validate user.'})
 
         if not user:

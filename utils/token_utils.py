@@ -34,8 +34,8 @@ def decode_access_token(token: str) -> TokenData:
 async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]) -> TokenData:
     try:
         payload = decode_access_token(token)
-        user_id = payload.get('id')
-        username = payload.get('username')
+        user_id = payload.id
+        username = payload.username
         if username is None or user_id is None:
             raise HTTPException(status_code=401, detail='Could not validate user.')
         return TokenData(**{
