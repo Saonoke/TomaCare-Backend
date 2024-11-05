@@ -11,7 +11,7 @@ class PostRepository(PostRepositoryMeta):
             statement = select(Posts)
             results = session.exec(statement).all()
         return results
-    def get_by_id(self, _id: str) -> Posts:
+    def get_by_id(self, _id: int) -> Posts:
         with Session(engine) as session:
             result = session.get(Posts, _id)
         return result
