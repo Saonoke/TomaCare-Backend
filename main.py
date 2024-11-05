@@ -7,7 +7,7 @@ app = FastAPI()
 
 # Add Rate Limiting Middleware
 app.add_middleware(RateLimitingMiddleware)
-app.add_middleware(AuthMiddleware)
+# app.add_middleware(AuthMiddleware)
 
 # Include the auth router
 app.include_router(auth_router)

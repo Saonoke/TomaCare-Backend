@@ -57,6 +57,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
         '/',
         '/auth',
         '/auth/token',
+        '/auth/google',
         '/auth/google-url',
     ]
 
