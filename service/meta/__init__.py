@@ -1,1 +1,0 @@
-from service.meta.auth_service_meta import AuthServiceMeta
