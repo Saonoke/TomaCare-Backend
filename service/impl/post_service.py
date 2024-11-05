@@ -9,10 +9,10 @@ from model import Posts
 
 
 class PostService(PostServiceMeta):
-    _post_repository = PostRepository
 
-    def __init__(self, post_repository: PostRepositoryMeta = Depends(PostRepository)):
-        self._post_repository = post_repository
+    def __init__(self, session:Session):
+        self.session = session
+        self._post_repository : PostRepositoryMeta = PostRepository(self.session)
 
     def get_all(self) -> List[Optional[PostResponse]]:
         print(self._post_repository.get_all())

@@ -1,5 +1,6 @@
 from typing import List
 from fastapi import Depends
+from sqlmodel import Session
 from controllers.base_controller import BaseController
 from model import Posts
 from database.schema import PostInput,PostResponse
@@ -9,8 +10,8 @@ from service.impl import PostService
 class  PostController(BaseController):
     _post_service : PostServiceMeta
 
-    def __init__(self, service: PostServiceMeta = Depends(PostService)):
-        self._post_service = service
+    def __init__(self,session:Session):
+        self._post_service : PostServiceMeta = PostService(session)
     
     def get_all(self) ->List[PostResponse]:
         try: 
