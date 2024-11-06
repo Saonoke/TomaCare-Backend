@@ -26,6 +26,11 @@ class PlCond(enum.Enum):
     SEHAT='Sehat'
     SAKIT='Sakit'
 
+class LikeCond(enum.Enum):
+    like=1
+    netral=0
+    dislike=-1
+
 def upgrade() -> None:
     op.create_table('images',
         sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
@@ -87,8 +92,11 @@ def upgrade() -> None:
         sa.Column('id', sa.Integer(), primary_key=True, autoincrement=True),
         sa.Column('user_id', sa.Integer(), nullable=False),
         sa.Column('image_id', sa.Integer(), default=0),
-        sa.Column('caption', sa.Text(1000), nullable=True),
+        sa.Column('title', sa.Text(100), nullable=True),
+        sa.Column('body', sa.Text(1000), nullable=True),
+
     )
+    
     op.create_foreign_key(
         None,
         source_table='posts',
@@ -99,6 +107,28 @@ def upgrade() -> None:
     op.create_foreign_key(
         None,
         source_table='posts',
+        referent_table='users',
+        local_cols=['user_id'],
+        remote_cols=['id']
+    )
+    
+    op.create_table('likes',
+        sa.Column('id', sa.Integer(), primary_key=True, autoincrement=True),
+        sa.Column('post_id', sa.Integer(), nullable=False),
+        sa.Column('user_id', sa.Integer(), nullable=False),
+        sa.Column('like', sa.Enum(LikeCond), nullable=False),
+    )
+
+    op.create_foreign_key(
+        None,
+        source_table='likes',
+        referent_table='posts',
+        local_cols=['post_id'],
+        remote_cols=['id']
+    )
+    op.create_foreign_key(
+        None,
+        source_table='likes',
         referent_table='users',
         local_cols=['user_id'],
         remote_cols=['id']
@@ -130,6 +160,7 @@ def downgrade() -> None:
     op.drop_table('results')
     op.drop_table('comments')
     op.drop_table('posts')
+    op.drop_table('likes')
     op.drop_table('plants')
     op.drop_table('users')
     op.drop_table('images')

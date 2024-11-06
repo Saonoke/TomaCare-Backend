@@ -1,16 +1,18 @@
 from fastapi import Depends, HTTPException
+from database.database import get_session
+from sqlmodel import Session
 from database.schema import UserLogin, UserRegister, UserResponse, Token, TokenData
 from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_REDIRECT_URL
 from model import Users
 from controllers.base_controller import BaseController
-from service.meta import AuthServiceMeta
-from service.impl import AuthService
+from service import AuthServiceMeta
+from service import AuthService
 
 class AuthController(BaseController):
     _user_service: AuthServiceMeta
 
-    def __init__(self, log_service: AuthServiceMeta = Depends(AuthService)):
-        self._user_service = log_service
+    def __init__(self, session:Session = Depends(get_session()) ):
+        self._user_service: AuthServiceMeta = AuthService(session)
 
     def register(self, user: UserRegister) -> UserResponse:
         try:

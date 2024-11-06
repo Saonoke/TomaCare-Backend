@@ -2,10 +2,10 @@ import requests
 
 from fastapi import Depends, HTTPException
 from datetime import timedelta
-
+from sqlmodel import Session
 from database.repository import UserRepositoryMeta, UserRepository
 from database.schema import TokenData, UserInfoGoogle, Token, UserLogin, UserResponse, UserRegister
-from service.meta import AuthServiceMeta
+from service import AuthServiceMeta
 from model import Users
 from utils import get_password_hash, verify_password
 from utils.token_utils import create_access_token, decode_access_token
@@ -13,10 +13,11 @@ from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_REDIRECT_URL, GOOGLE_CLIENT_S
 
 
 class AuthService(AuthServiceMeta):
-    _user_repository = UserRepository
+    
 
-    def __init__(self, log_repository: UserRepositoryMeta = Depends(UserRepository)):
-        self._user_repository = log_repository
+    def __init__(self, session:Session):
+        self.session = session
+        self._user_repository : UserRepositoryMeta = UserRepository(self.session)
 
     def create_user(self, user: UserRegister) -> UserResponse:
         try:
