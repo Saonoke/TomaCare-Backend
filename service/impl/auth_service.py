@@ -8,7 +8,7 @@ from database.schema import TokenData, UserInfoGoogle, Token, UserLogin, UserRes
 from service import AuthServiceMeta
 from model import Users
 from utils import get_password_hash, verify_password
-from utils.token_utils import create_access_token, decode_access_token
+from utils.token_utils import create_access_token
 from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_REDIRECT_URL, GOOGLE_CLIENT_SECRET, EXPIRATION_TIME
 
 
