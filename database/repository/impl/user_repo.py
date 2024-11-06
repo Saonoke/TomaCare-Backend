@@ -2,12 +2,10 @@ from sqlmodel import select, Session
 
 from database.repository.meta import UserRepositoryMeta
 from model import Users
-from database import engine
 
 class UserRepository(UserRepositoryMeta):
     def __init__(self, session:Session):
         self.session = session
-        
 
     def get_by_email(self, _email: str ) -> Users:
         stm = select(Users).where(Users.email == _email)
@@ -30,14 +28,11 @@ class UserRepository(UserRepositoryMeta):
         return result
 
     def edit(self, model: Users, _id: str ) -> Users:
-        
-        statement = select(Users).where(Users.id == _id)
-        results = self.session.exec(statement)
-        db_user = results.one()
-        if db_user is None:
+        db_user = self.session.get(Users, _id)
+        if not db_user:
             return None
-        for var, value in vars(model).items():
-            setattr(db_user, var, value) if value else None
+        user_data = model.model_dump(exclude_unset=True)
+        db_user.sqlmodel_update(user_data)
         self.session.add(db_user)
         self.session.commit()
         self.session.refresh(db_user)
