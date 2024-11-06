@@ -2,8 +2,13 @@ from fastapi import FastAPI
 from routes import plant_router
 from routes import auth_router
 from routes import post_router
+from security.middleware import RateLimitingMiddleware, AuthMiddleware
 
 app = FastAPI()
+
+# Add Rate Limiting Middleware
+app.add_middleware(RateLimitingMiddleware)
+# app.add_middleware(AuthMiddleware)
 
 # Include the auth router
 # app.include_router(auth_router)
