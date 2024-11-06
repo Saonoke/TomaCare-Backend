@@ -74,7 +74,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
 
     @staticmethod
     def __get_route(url: str):
-        return f"/{url.split('/', maxsplit=3)[-1]}"
+        return f"/{url.split('/', maxsplit=3)[-1]}".split('?')[0]
 
     def __check_whitelist_route(self, request: Request) -> bool:
         """
