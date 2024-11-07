@@ -1,11 +1,6 @@
 from abc import abstractmethod
-from typing import Annotated
-from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
 
-from database.schema import UserResponse, UserRegister, UserLogin, Token, UserInfoGoogle, TokenData
-
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl='users/token')
+from database.schema import UserResponse, UserRegister, UserLogin, Token, UserInfoGoogle
 
 class AuthServiceMeta:
 

@@ -7,7 +7,7 @@ class UserResponse(BaseModel):
     full_name: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserRegister(BaseModel):
     email: EmailStr = Field(
