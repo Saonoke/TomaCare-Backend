@@ -2,14 +2,15 @@ from fastapi import Depends, HTTPException
 from database.database import get_session
 from sqlmodel import Session
 from database.schema import PlantBase, PlantCreate, PlantUpdate, PlantShow
+from model import Users
 from service import PlantService, PlantServiceMeta
 from controllers.base_controller import BaseController
 
 class PlantController(BaseController):
     
-    def __init__(self,session:Session):
-        self._plant_service : PlantServiceMeta = PlantService(session)
-    
+    def __init__(self, user: Users, session:Session):
+        self._plant_service : PlantServiceMeta = PlantService(user, session)
+
     def create_plant (self,data:PlantCreate) -> PlantCreate:
         try:
             return self._plant_service.create_plant(data)
@@ -18,7 +19,6 @@ class PlantController(BaseController):
     
     def get_all_plan(self)->list[PlantShow]:
         try:
-            
             plan =self._plant_service.show_all_plant()
             return plan
         except Exception as e:

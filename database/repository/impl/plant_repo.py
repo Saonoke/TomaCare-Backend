@@ -44,8 +44,8 @@ class PlantRepository(PlantRepositoryMeta):
         return plant
 
     
-    def getAll(self,):
-       plants = self.session.exec(select(Plants)).all()
+    def getAll(self, _user_id: int):
+       plants = self.session.exec(select(Plants).where(Plants.user_id == _user_id)).all()
        if not plants:
            return []
        return plants
