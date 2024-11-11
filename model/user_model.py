@@ -1,5 +1,5 @@
 from pydantic import EmailStr
-from sqlmodel import Field, SQLModel, VARCHAR, Column, String
+from sqlmodel import Field, SQLModel, VARCHAR, Column, String, Relationship
 
 class Users(SQLModel, table=True):
     id: int = Field(primary_key=True, sa_column_kwargs={'autoincrement': True})
