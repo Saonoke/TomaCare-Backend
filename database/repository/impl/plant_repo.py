@@ -2,7 +2,7 @@ from sqlmodel import select, Session
 from database.repository.meta import PlantRepositoryMeta
 from model import Plants
 from database.schema import PlantCreate, PlantUpdate
-from database import engine
+
 
 class PlantRepository(PlantRepositoryMeta):
 

@@ -1,5 +1,4 @@
 from abc import abstractmethod
-from sqlmodel import Session
 from model import Plants
 
 class PlantRepositoryMeta:
