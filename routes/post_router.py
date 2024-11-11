@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlmodel import Session
 from controllers import PostController
 from database.database import get_session
@@ -27,16 +27,16 @@ async def get_by_user_id(_id : int,session:Session = Depends(get_session)):
     return  controller.get_by_user_id(_id)
 
 @post_router.post("/", response_model=PostResponse,status_code=201)
-async def add(postInput : PostInput,session:Session = Depends(get_session)):
-    controller = PostController(session)
+async def add(request: Request, postInput : PostInput,session:Session = Depends(get_session)):
+    controller = PostController(session, user=request.state.user)
     return  controller.add(postInput)
 
 @post_router.post("/{_id}", response_model=PostResponse,status_code=201)
-async def edit(postInput : PostInput,_id : int,session:Session = Depends(get_session)):
-    controller = PostController(session)
+async def edit(request: Request, postInput : PostInput,_id : int,session:Session = Depends(get_session)):
+    controller = PostController(session, user=request.state.user)
     return  controller.edit(postInput,_id)
 
 @post_router.delete("/{_id}",status_code=200)
-async def delete(_id : int,session:Session = Depends(get_session)):
-    controller = PostController(session)
+async def delete(request: Request, _id : int,session:Session = Depends(get_session)):
+    controller = PostController(session, user=request.state.user)
     return   controller.delete(_id) 
