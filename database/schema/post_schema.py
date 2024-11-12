@@ -1,4 +1,4 @@
-from typing import Optional
+from enum import Enum
 from pydantic import BaseModel
 
 class PostResponse(BaseModel):
@@ -15,4 +15,14 @@ class PostInput(BaseModel):
     title : str
     body : str
     image_id : int
-    
+
+class ReactionEnum(str, Enum):
+    LIKE = "Like"
+    DISLIKE = "Dislike"
+
+class ReactionInput(BaseModel):
+    type: ReactionEnum
+
+class ReactionResponse(BaseModel):
+    action: str
+    success: bool

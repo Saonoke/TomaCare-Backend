@@ -1,5 +1,7 @@
 from sqlmodel import Field, SQLModel, Relationship
 
+from model.reaction_model import Reaction
+
 
 class Posts(SQLModel, table=True):
     id: int = Field(primary_key=True, sa_column_kwargs={'autoincrement': True})
@@ -7,4 +9,6 @@ class Posts(SQLModel, table=True):
     body : str
     user_id: int | None = Field(default=None, foreign_key="users.id")
     image_id: int = Field(default=None)
+
+    users_links: list[Reaction] = Relationship(back_populates="post")
   
