@@ -3,7 +3,9 @@ from fastapi import APIRouter, Depends, Request
 from sqlmodel import Session
 from controllers import PostController
 from database.database import get_session
-from database.schema import  PostInput,PostResponse
+from database.schema import PostInput, PostResponse, ReactionInput
+from database.schema.post_schema import ReactionResponse
+from model import Reaction
 
 post_router = APIRouter(
     prefix="/post",
@@ -39,4 +41,9 @@ async def edit(request: Request, postInput : PostInput,_id : int,session:Session
 @post_router.delete("/{_id}",status_code=200)
 async def delete(request: Request, _id : int,session:Session = Depends(get_session)):
     controller = PostController(session, user=request.state.user)
-    return   controller.delete(_id) 
+    return   controller.delete(_id)
+
+@post_router.post("/{_id}/reaction", response_model=ReactionResponse, status_code=200)
+async def delete(request: Request, reaction: ReactionInput, _id : int,session:Session = Depends(get_session)):
+    controller = PostController(session, user=request.state.user)
+    return controller.reaction(_id, reaction)
