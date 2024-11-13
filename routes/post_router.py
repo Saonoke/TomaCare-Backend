@@ -4,7 +4,7 @@ from sqlmodel import Session
 from controllers import PostController
 from database.database import get_session
 from database.schema import PostInput, PostResponse, ReactionInput
-from database.schema.post_schema import ReactionResponse
+from database.schema.post_schema import ReactionResponse, PostResponseGet
 from model import Reaction
 
 post_router = APIRouter(
@@ -13,19 +13,19 @@ post_router = APIRouter(
 )
 
 
-@post_router.get("/",response_model=List[PostResponse],status_code=200)
-async def get_all(session:Session = Depends(get_session)):
-    controller = PostController(session)
+@post_router.get("/",response_model=List[PostResponseGet],status_code=200)
+async def get_all(request: Request, session:Session = Depends(get_session)):
+    controller = PostController(session, user=request.state.user)
     return  controller.get_all()
 
-@post_router.get("/{_id}", response_model=PostResponse,status_code=200)
-async def get_by_id(_id : int,session:Session = Depends(get_session)):
-    controller = PostController(session)
+@post_router.get("/{_id}", response_model=PostResponseGet,status_code=200)
+async def get_by_id(request: Request, _id : int,session:Session = Depends(get_session)):
+    controller = PostController(session, user=request.state.user)
     return  controller.get_by_id(_id)
 
-@post_router.get("/user/{_id}",response_model=List[PostResponse],status_code=200)
-async def get_by_user_id(_id : int,session:Session = Depends(get_session)): 
-    controller = PostController(session) 
+@post_router.get("/user/{_id}",response_model=List[PostResponseGet],status_code=200)
+async def get_by_user_id(request: Request, _id : int,session:Session = Depends(get_session)):
+    controller = PostController(session, user=request.state.user)
     return  controller.get_by_user_id(_id)
 
 @post_router.post("/", response_model=PostResponse,status_code=201)
