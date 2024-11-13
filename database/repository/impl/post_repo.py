@@ -21,8 +21,7 @@ class PostRepository(PostRepositoryMeta):
         return results
     def add(self, model: Posts) -> Posts:
         self.session.add(model)
-        self.session.commit()
-        self.session.refresh(model)
+        self.session.flush()
         return model
     def edit(self, model: Posts, _id: int) -> Posts:
         statement = select(Posts).where(Posts.id == _id)
@@ -30,13 +29,10 @@ class PostRepository(PostRepositoryMeta):
         db_post = results.one()
         if db_post is None:
             return None
-
         db_post.title = model.title
         db_post.body = model.body
-        db_post.image_id = model.image_id
-
-        self.session.commit()
-        self.session.refresh(db_post)
+        self.session.add(db_post)
+        self.session.flush()
         return db_post
     def delete(self, _id: int) -> bool  :
         statement = select(Posts).where(Posts.id == _id)

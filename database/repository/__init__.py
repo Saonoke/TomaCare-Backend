@@ -6,4 +6,5 @@ from database.repository.impl.post_repo import PostRepository
 from database.repository.meta.post_repo_meta import PostRepositoryMeta
 from database.repository.meta.task_repo_meta import TaskRepositoryMeta
 from database.repository.impl.task_repo import  TaskRepository
-
+from database.repository.impl.image_repo import ImageRepository
+from database.repository.meta.image_repo_meta import ImageRepositoryMeta

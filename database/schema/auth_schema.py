@@ -5,7 +5,8 @@ class UserResponse(BaseModel):
     email: EmailStr
     username: str
     full_name: str
-
+    profile_img : int
+    
     class Config:
         from_attributes = True
 

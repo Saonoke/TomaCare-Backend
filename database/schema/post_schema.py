@@ -14,5 +14,5 @@ class PostResponse(BaseModel):
 class PostInput(BaseModel):
     title : str
     body : str
-    image_id : int
+    image_path : str
     

@@ -4,6 +4,7 @@ from sqlmodel import Session
 from database.database import get_session
 from database.schema import UserLogin, UserRegister, UserResponse, Token, TokenData
 
+from database.schema.user_schema import UserUpdate
 from model import Users
 from controllers.base_controller import BaseController
 from service.meta import UserServiceMeta
@@ -23,7 +24,7 @@ class UserController(BaseController):
         except Exception as e:
             return self.ise(e)
 
-    def update(self, request: Request, user_model: Users) -> Users:
+    def update(self, request: Request, user_model: UserUpdate) -> Users:
         try:
             return self._user_service.edit(user_model, request.state.user.id)
         except HTTPException as e:
