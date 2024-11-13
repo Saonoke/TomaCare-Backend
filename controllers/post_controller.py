@@ -2,8 +2,9 @@ from typing import List
 from fastapi import Depends
 from sqlmodel import Session
 from controllers.base_controller import BaseController
+from database.schema.post_schema import ReactionResponse
 from model import Posts, Users
-from database.schema import PostInput,PostResponse
+from database.schema import PostInput, PostResponse, ReactionInput
 from service.meta import PostServiceMeta
 from service.impl import PostService
 
@@ -49,4 +50,9 @@ class  PostController(BaseController):
         except Exception as e:
             return self.ise(e)
 
+    def reaction(self, _post_id: int, _type: ReactionInput) -> ReactionResponse:
+        try:
+            return self._post_service.reaction(_post_id, _type)
+        except Exception as e:
+            return self.ise(e)
 
