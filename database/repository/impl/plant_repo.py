@@ -11,7 +11,7 @@ class PlantRepository(PlantRepositoryMeta):
 
     def create(self, model: Plants) -> Plants:
         self.session.add(model)
-        self.session._flush()
+        self.session.flush()
         return model
         
     def update(self,model: PlantUpdate,_id:int) -> Plants:
