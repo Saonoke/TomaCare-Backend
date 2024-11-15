@@ -11,6 +11,10 @@ from model import Posts, Users,Images
 from database.repository import PostRepository, PostRepositoryMeta, ReactionRepositoryMeta, ReactionRepository
 from database.schema import ReactionInput
 from model import Reaction
+from database.schema import PostInput, PostResponse, ReactionInput
+from database.schema.post_schema import ReactionEnum, PostResponseGet
+from service.meta import PostServiceMeta
+from model import Posts, Users, Reaction
 
 
 class PostService(PostServiceMeta):
@@ -22,21 +26,42 @@ class PostService(PostServiceMeta):
         self._image_repository :ImageRepositoryMeta = ImageRepository(self.session)
         self._reaction_repository: ReactionRepositoryMeta = ReactionRepository(self.session)
 
+    def __post_model2schema(self, model: Posts)-> Optional[PostResponse]:
+        model_dump = model.model_dump()
+        model_dump["count_like"] = len([x for x in model.users_links if str(x.reaction_type) == str(ReactionEnum.LIKE)])
+        model_dump["count_dislike"] = len([x for x in model.users_links if str(x.reaction_type) == str(ReactionEnum.DISLIKE)])
+        model_dump["liked"] = len([x for x in model.users_links if (x.users_id == self._user.id) and (str(x.reaction_type) == str(ReactionEnum.LIKE))]) == 1
+        model_dump["disliked"] = len([x for x in model.users_links if (x.users_id == self._user.id) and (str(x.reaction_type) == str(ReactionEnum.DISLIKE))]) == 1
+        return PostResponseGet(**model_dump)
 
     def get_all(self) -> List[Optional[PostResponse]]:
-        return self._post_repository.get_all()
-        
+        posts = self._post_repository.get_all()
+        responses = []
+        for post in posts:
+            responses.append(
+                self.__post_model2schema(post)
+            )
+        return responses
+
     def get_by_id(self,_id : int) -> PostResponse:
         if not self._post_repository.get_by_id(_id):
             raise HTTPException(status_code=404, detail="ID not found")
-        else :
-            return self._post_repository.get_by_id(_id)
+        else:
+            return self.__post_model2schema(
+                self._post_repository.get_by_id(_id)
+            )
     
     def get_by_user_id(self, _user_id : int) -> List[Optional[PostResponse]]:
         if not self._post_repository.get_by_user_id(_user_id):
             raise HTTPException(status_code=404, detail="User ID not found")
-        else :
-            return self._post_repository.get_by_user_id(_user_id)
+        else:
+            posts = self._post_repository.get_by_user_id(_user_id)
+            responses = []
+            for post in posts:
+                responses.append(
+                    self.__post_model2schema(post)
+                )
+            return responses
 
     def add(self, post: PostInput) -> Optional[PostResponse]:
         try :

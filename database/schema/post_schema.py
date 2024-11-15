@@ -7,9 +7,15 @@ class PostResponse(BaseModel):
     body : str
     user_id : int
     image_id : int | None = None
-    
+
     class Config:
         from_attributes = True
+
+class PostResponseGet(PostResponse):
+    count_like : int
+    count_dislike: int
+    liked : bool
+    disliked : bool
 
 class PostInput(BaseModel):
     title : str
