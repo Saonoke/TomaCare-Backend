@@ -20,7 +20,8 @@ class PostResponseGet(PostResponse):
 class PostInput(BaseModel):
     title : str
     body : str
-    image_id : int
+    image_path : str
+    
 
 class ReactionEnum(str, Enum):
     LIKE = "Like"
@@ -32,3 +33,4 @@ class ReactionInput(BaseModel):
 class ReactionResponse(BaseModel):
     action: str
     success: bool
+

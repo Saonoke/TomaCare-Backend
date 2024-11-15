@@ -16,4 +16,6 @@ class Plants(SQLModel,table = True):
     user_id : int | None = Field(default=None, foreign_key="users.id")
     title : str = Field(sa_column=Column("title", VARCHAR(100)), max_length=100)
     condition : str = Field(sa_column=Column("condition",Enum(penyakitEnum)))
+    image_id: int = Field(default=None,foreign_key="images.id")
     task : list["Task"] = Relationship(back_populates="plants", cascade_delete=True)
+    

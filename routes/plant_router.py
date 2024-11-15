@@ -12,11 +12,10 @@ async def create_plant(request: Request, data:PlantCreate, session:Session = Dep
     controller = PlantController(request.state.user, session)
     return controller.create_plant(data)
 
-@plant_router.get('/',status_code=200,response_model=PlantShow)
+@plant_router.get('/',status_code=200,response_model=list[PlantShow])
 async def get_plant_all(request: Request, session:Session = Depends(get_session)):
     controller = PlantController(request.state.user, session)
-    plants = controller.get_all_plan()
-    return {"data":plants}
+    return controller.get_all_plan()
 
 @plant_router.get('/{plant_id}',status_code=200)
 async def show_plan(request: Request, plant_id:int, session:Session = Depends(get_session)):

@@ -3,7 +3,14 @@ from typing import List, Optional
 
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
+
+from database.repository import ImageRepository,ImageRepositoryMeta
+from database.schema import PostInput,PostResponse
+from model import Posts, Users,Images
+
 from database.repository import PostRepository, PostRepositoryMeta, ReactionRepositoryMeta, ReactionRepository
+from database.schema import ReactionInput
+from model import Reaction
 from database.schema import PostInput, PostResponse, ReactionInput
 from database.schema.post_schema import ReactionEnum, PostResponseGet
 from service.meta import PostServiceMeta
@@ -16,6 +23,7 @@ class PostService(PostServiceMeta):
         self.session = session
         self._user = user
         self._post_repository : PostRepositoryMeta = PostRepository(self.session)
+        self._image_repository :ImageRepositoryMeta = ImageRepository(self.session)
         self._reaction_repository: ReactionRepositoryMeta = ReactionRepository(self.session)
 
     def __post_model2schema(self, model: Posts)-> Optional[PostResponse]:
@@ -55,26 +63,45 @@ class PostService(PostServiceMeta):
                 )
             return responses
 
-    def add(self, post: PostInput) -> PostResponse:
-        post = Posts(title=post.title, body=post.body, image_id=post.image_id, user_id=self._user.id)
-        return self._post_repository.add(post)
+    def add(self, post: PostInput) -> Optional[PostResponse]:
+        try :
+            image_id = self._image_repository.create(Images(image_path=post.image_path))
+            post = Posts(title=post.title, body=post.body, image_id=image_id, user_id=self._user.id)
+            result =self._post_repository.add(post)
+            self.session.commit()
+            return result
+        except Exception as e:
+            print(e)
+            self.session.rollback()
+            raise HTTPException(status_code=400, detail="Create Failed")
+        
 
-    def edit(self,_post: PostInput,_id: int) -> PostResponse:
-        post = self._post_repository.get_by_id(_id)
-        if not post:
+    def edit(self,post: PostInput,_id: int) -> PostResponse:
+        dbpost = self._post_repository.get_by_id(_id)
+        if not dbpost:
             raise HTTPException(status_code=404, detail="ID not found")
-        if post.user_id != self._user.id:
-            raise HTTPException(status_code=403, detail="Forbidden: You do not have access to this plant")
+        if dbpost.user_id != self._user.id:
+            raise HTTPException(status_code=403, detail="Forbidden: You do not have access to this Post")
         else:
-            post = Posts(id= _id,title=_post.title, body=_post.body, image_id=_post.image_id,user_id=self._user.id)
-            return self._post_repository.edit(post,_id)
+            try :
+                image = Images(image_path=post.image_path)
+                self._image_repository.edit(dbpost.image_id,image)
+                post = Posts(id= _id,title=post.title, body=post.body,user_id=self._user.id)
+                result = self._post_repository.edit(post,_id)
+                self.session.commit()
+                return result
+            except Exception as e:
+                print(e)
+                self.session.rollback()
+                raise HTTPException(status_code=400, detail="Update Failed")
+
 
     def delete(self, _id:int) -> bool:
         post = self._post_repository.get_by_id(_id)
         if not post:
             raise HTTPException(status_code=404, detail="ID not found")
         if post.user_id != self._user.id:
-            raise HTTPException(status_code=403, detail="Forbidden: You do not have access to this plant")
+            raise HTTPException(status_code=403, detail="Forbidden: You do not have access to this Post")
         else :
             return self._post_repository.delete(_id)
 

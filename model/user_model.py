@@ -9,6 +9,8 @@ class Users(SQLModel, table=True):
     username: str = Field(sa_column=Column("username", VARCHAR(100), unique=True), max_length=100)
     full_name: str = Field(max_length=200)
     password: str = Column(String(200))
+    profile_img: int = Field(default=None,foreign_key="images.id")
+
 
     posts_links: list[Reaction] = Relationship(back_populates="user")
 
