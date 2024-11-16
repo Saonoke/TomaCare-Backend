@@ -2,16 +2,17 @@ from typing import List
 from fastapi import Depends
 from sqlmodel import Session
 from controllers.base_controller import BaseController
-from model import Posts
-from database.schema import PostInput,PostResponse
+from database.schema.post_schema import ReactionResponse
+from model import Posts, Users
+from database.schema import PostInput, PostResponse, ReactionInput
 from service.meta import PostServiceMeta
 from service.impl import PostService
 
 class  PostController(BaseController):
     _post_service : PostServiceMeta
 
-    def __init__(self,session:Session):
-        self._post_service : PostServiceMeta = PostService(session)
+    def __init__(self,session:Session, user: Users = Users()):
+        self._post_service : PostServiceMeta = PostService(session, user= user)
     
     def get_all(self) ->List[PostResponse]:
         try: 
@@ -32,7 +33,6 @@ class  PostController(BaseController):
             return self.ise(e)
     def add(self, post_input : PostInput) -> PostResponse: 
         try:
-            print(post_input)
             return self._post_service.add(post_input)
         except Exception as e:
             return self.ise(e)
@@ -50,4 +50,9 @@ class  PostController(BaseController):
         except Exception as e:
             return self.ise(e)
 
+    def reaction(self, _post_id: int, _type: ReactionInput) -> ReactionResponse:
+        try:
+            return self._post_service.reaction(_post_id, _type)
+        except Exception as e:
+            return self.ise(e)
 

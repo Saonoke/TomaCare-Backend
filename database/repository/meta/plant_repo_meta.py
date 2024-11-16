@@ -18,7 +18,7 @@ class PlantRepositoryMeta:
     def delete(self,_id:int) -> Plants:
         pass
 
-    def getAll(self) -> list[Plants]:
+    def getAll(self, _user_id:int) -> list[Plants]:
         pass
 
 

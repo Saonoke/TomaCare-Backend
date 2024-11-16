@@ -3,6 +3,7 @@ from abc import abstractmethod
 from sqlmodel import Session
 
 from model import Users
+from database.schema  import UserUpdate
 
 
 class UserServiceMeta:
@@ -12,7 +13,7 @@ class UserServiceMeta:
         pass
 
     @abstractmethod
-    def edit(self, user_data: Users, _id: int) -> Users:
+    def edit(self, user_data: UserUpdate, _id: int) -> Users:
         pass
 
     @abstractmethod

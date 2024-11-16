@@ -5,6 +5,7 @@ class UserUpdate(BaseModel):
     email: EmailStr
     username: str
     full_name: str
+    profile_img : str
 
     class Config:
         from_attributes = True

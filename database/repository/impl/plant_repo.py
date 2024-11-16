@@ -9,12 +9,10 @@ class PlantRepository(PlantRepositoryMeta):
     def __init__(self,session:Session):
         self.session = session
 
-    def create(self, model: PlantCreate) -> Plants:
-        plant = Plants(**model.dict())
-        self.session.add(plant)
-        self.session.commit()
-        self.session.refresh(plant)
-        return plant
+    def create(self, model: Plants) -> Plants:
+        self.session.add(model)
+        self.session.flush()
+        return model
         
     def update(self,model: PlantUpdate,_id:int) -> Plants:
         plant = self.session.get(Plants,_id)
@@ -23,8 +21,7 @@ class PlantRepository(PlantRepositoryMeta):
         plant_data = model.model_dump(exclude_unset=True)
         plant.sqlmodel_update(plant_data)
         self.session.add(plant)
-        self.session.commit()
-        self.session.refresh(plant)
+        self.session.flush()
         return plant
     
             
@@ -44,8 +41,8 @@ class PlantRepository(PlantRepositoryMeta):
         return plant
 
     
-    def getAll(self,):
-       plants = self.session.exec(select(Plants)).all()
+    def getAll(self, _user_id: int):
+       plants = self.session.exec(select(Plants).where(Plants.user_id == _user_id)).all()
        if not plants:
            return []
        return plants

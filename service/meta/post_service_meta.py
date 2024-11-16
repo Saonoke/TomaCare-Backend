@@ -2,7 +2,7 @@ from abc import abstractmethod
 from typing import List, Optional
 
 from model import Posts
-from database.schema  import PostInput,PostResponse
+from database.schema  import PostInput,PostResponse,ReactionInput
 
 class PostServiceMeta:
     @abstractmethod
@@ -26,4 +26,9 @@ class PostServiceMeta:
 
     @abstractmethod
     def delete(self, _id :int) -> bool:
+        pass
+
+    # REACTION
+    @abstractmethod
+    def reaction(self, _post_id :int, _type: ReactionInput) -> bool:
         pass
