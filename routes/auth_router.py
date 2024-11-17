@@ -15,10 +15,11 @@ auth_router = APIRouter(
 
 user_dependency = Annotated[TokenData, Depends(get_current_user)]
 
-@auth_router.post("", response_model=UserResponse)
+@auth_router.post("", response_model=UserResponse , status_code=201)
 async def register_user(user: UserRegister, session:Session = Depends(get_session)):
     controller = AuthController(session)
-    return controller.register(user)
+    data = controller.register(user)    
+    return data
 
 @auth_router.post("/token", response_model=Token)
 async def login_user(user: UserLogin, session: Session = Depends(get_session)):

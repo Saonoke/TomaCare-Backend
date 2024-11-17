@@ -14,9 +14,11 @@ class AuthController(BaseController):
     def __init__(self, session:Session = Depends(get_session()) ):
         self._user_service: AuthServiceMeta = AuthService(session)
 
-    def register(self, user: UserRegister) -> UserResponse:
+    def register(self, user: UserRegister) -> UserRegister:
         try:
-            return self._user_service.create_user(user)
+            data = self._user_service.create_user(user)
+       
+            return data
         except Exception as e:
             return self.ise(e)
 
