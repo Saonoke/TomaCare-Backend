@@ -5,8 +5,7 @@ class UserResponse(BaseModel):
     email: EmailStr
     username: str
     full_name: str
-    profile_img : int
-    
+    profile_img : int | None = None
     class Config:
         from_attributes = True
 
@@ -34,6 +33,9 @@ class UserLogin(BaseModel):
     password: str = Field(
         examples=['Password#1234']
     )
+
+class UserRequest(BaseModel):
+    body:UserLogin
 
 class UserInfoGoogle(BaseModel):
     id: int
