@@ -15,7 +15,7 @@ class PostSeeder:
                 title='Cara Mengatasi Penyakit Layu pada Tomat',
                 body='Tanaman tomat saya layu, adakah yang punya solusi?',
                 user_id=1,
-                image_id=0
+                image_id=1
             ),
             Posts(
                 id=2,
@@ -43,7 +43,7 @@ class PostSeeder:
                 title='Waktu Penyiraman yang Tepat',
                 body='Kapan waktu yang tepat untuk menyiram tomat agar tidak mudah terkena penyakit?',
                 user_id=2,
-                image_id=4
+                image_id=3
             )
         ]
 
