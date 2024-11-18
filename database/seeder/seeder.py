@@ -3,6 +3,7 @@ from .plants_seeder import plants_seeder
 from .task_seeder import tasks_seeder
 from .post_seeder import PostSeeder
 from .reaction_seeder import ReactionSeeder
+from .images_seeder import ImagesSeeder
 
 # from sqlalchemy import create_engine
 from sqlmodel import create_engine, Session
@@ -32,6 +33,7 @@ engine = create_engine(DATABASE_URL)
    
 def up():
     with Session(engine) as session:
+        ImagesSeeder(session).execute()
         users_seeder(session).execute()
         plants_seeder(session).execute()
         tasks_seeder(session).execute()
@@ -46,6 +48,7 @@ def down():
         tasks_seeder(session).clear()
         plants_seeder(session).clear()
         users_seeder(session).clear()
+        ImagesSeeder(session).clear()
 
 
 if __name__ == "__main__":

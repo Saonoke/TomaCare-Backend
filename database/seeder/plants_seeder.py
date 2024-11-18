@@ -8,21 +8,20 @@ class plants_seeder():
     @staticmethod
     def create_plants():
         plants = [
-            Plants(id= 1, user_id=1, title="tes",condition="sakit")
-
-            ]
+            Plants(id= 1, user_id=1, title="tes",condition="sakit",image_id=2),
+        ]
         return plants
 
     def clear(self):
         plants = self.session.exec(select(Plants)).all()
 
-        for plant in plants :
+        for plant in plants:
             self.session.delete(plant)
         self.session.commit()
 
     def execute(self):
         plants = self.create_plants()
 
-        for plant in plants :
+        for plant in plants:
             self.session.add(plant)
         self.session.commit()
