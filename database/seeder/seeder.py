@@ -45,6 +45,7 @@ def up():
 
 def down():
     with Session(engine) as session:
+        CommentsSeeder(session).clear()
         ReactionSeeder(session).clear()
         PostSeeder(session).clear()
         tasks_seeder(session).clear()
