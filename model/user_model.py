@@ -1,6 +1,8 @@
+from typing import Optional
 from pydantic import EmailStr
 from sqlmodel import Field, SQLModel, VARCHAR, Column, String, Relationship
 
+from model.comment_model import Comments
 from model.reaction_model import Reaction
 
 class Users(SQLModel, table=True):
@@ -10,5 +12,7 @@ class Users(SQLModel, table=True):
     full_name: str = Field(max_length=200)
     password: str = Column(String(200))
     profile_img: int | None = Field(default=None,foreign_key="images.id")
+
     posts_links: list[Reaction] = Relationship(back_populates="user")
+    posts_comments: list[Comments] = Relationship(back_populates="user")
 

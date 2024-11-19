@@ -1,6 +1,7 @@
 # TomaCare - Backend
 
 ## Installation
+
 - Create virtual environment using python.
   ```bash
   python -m venv .venv
@@ -29,6 +30,15 @@
   DATABASE_URL=mysql+pymysql://USER:PASS@HOST/tomacare
   ```
 - Run database migration.
+
   ```bash
+  alembic downgrade -1
+  alembic revision --autogenerate
   alembic upgrade head
+  ```
+
+  Run seeder
+
+  ```
+  python -m database.seeder.seeder --seed
   ```

@@ -2,7 +2,7 @@ from sqlmodel import SQLModel, Field, Column, VARCHAR,Enum,  Relationship
 import enum
 
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from model import Task

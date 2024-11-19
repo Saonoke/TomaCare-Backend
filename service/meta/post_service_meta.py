@@ -1,8 +1,9 @@
 from abc import abstractmethod
 from typing import List, Optional
 
+from database.schema.post_schema import CommentResponse
 from model import Posts
-from database.schema  import PostInput,PostResponse,ReactionInput
+from database.schema  import PostInput,PostResponse,ReactionInput,CommentInput
 
 class PostServiceMeta:
     @abstractmethod
@@ -32,3 +33,14 @@ class PostServiceMeta:
     @abstractmethod
     def reaction(self, _post_id :int, _type: ReactionInput) -> bool:
         pass
+    
+    #Commenr
+    @abstractmethod
+    def add_comment(self, _post_id :int, _comment: CommentInput) -> CommentResponse:
+        pass
+
+    @abstractmethod
+    def del_comment(self, _post_id :int, _comment_id: int) -> bool:
+        pass
+
+    

@@ -1,12 +1,18 @@
 from enum import Enum
 from pydantic import BaseModel
 
+class CommentResponse(BaseModel):
+    id : int
+    user_id : int
+    commentary : str
+
 class PostResponse(BaseModel):
     id :int 
     title : str
     body : str
     user_id : int
     image_id : int | None = None
+    comments : list[CommentResponse]
 
     class Config:
         from_attributes = True
@@ -33,4 +39,8 @@ class ReactionInput(BaseModel):
 class ReactionResponse(BaseModel):
     action: str
     success: bool
+
+class CommentInput(BaseModel):
+    commentary : str
+
 
