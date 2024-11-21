@@ -11,9 +11,9 @@ class users_seeder():
     @staticmethod
     def create_user():
         user = [
-            Users(id=1,email="krisnagmerz21@gmail.com",username="saonoke",full_name="krisna andika",password=get_password_hash("tes"),profile_img=1),
-            Users(id=2,email="naufalkurniawan605@gmail.com",username="nopal",full_name="Naufal Kurniawan",password=get_password_hash("Admin#1234"),profile_img=1),
-            Users(id=3,email="figas@gmail.com",username="figas",full_name="Sofi",password=get_password_hash("Admin#1234"),profile_img=1),
+            Users(id=1,email="krisnagmerz21@gmail.com",username="saonoke",full_name="krisna andika",password=get_password_hash("tes"),profile_img=4),
+            Users(id=2,email="naufalkurniawan605@gmail.com",username="nopal",full_name="Naufal Kurniawan",password=get_password_hash("Admin#1234"),profile_img=5),
+            Users(id=3,email="figas@gmail.com",username="figas",full_name="Sofi",password=get_password_hash("Admin#1234"),profile_img=6),
         ]
         return user
 
