@@ -4,7 +4,7 @@ from sqlmodel import Session
 from controllers.base_controller import BaseController
 from database.schema.post_schema import ReactionResponse
 from model import Posts, Users
-from database.schema import PostInput, PostResponse, ReactionInput
+from database.schema import PostInput, PostResponse, ReactionInput,CommentResponse,CommentInput
 from service.meta import PostServiceMeta
 from service.impl import PostService
 
@@ -55,4 +55,20 @@ class  PostController(BaseController):
             return self._post_service.reaction(_post_id, _type)
         except Exception as e:
             return self.ise(e)
+        
+    def add_comment(self,_post_id : int, comment_input : CommentInput) -> CommentResponse :
+        try:
+            return self._post_service.add_comment(_post_id, comment_input)
+        except Exception as e:
+            return self.ise(e)
+    
+    def del_comment(self,_post_id : int,_comment_id : int) -> bool:
+        print(_post_id,_comment_id)
+        try: 
+            return self._post_service.del_comment(_post_id,_comment_id)
+        except Exception as e:
+            return self.ise(e)
+        
+    
+    
 

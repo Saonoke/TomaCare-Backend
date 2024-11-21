@@ -1,3 +1,4 @@
+from database.seeder.comment_seeder import CommentsSeeder
 from .user_seeder import users_seeder
 from .plants_seeder import plants_seeder
 from .task_seeder import tasks_seeder
@@ -39,10 +40,12 @@ def up():
         tasks_seeder(session).execute()
         PostSeeder(session).execute()
         ReactionSeeder(session).execute()
+        CommentsSeeder(session).execute()
 
 
 def down():
     with Session(engine) as session:
+        CommentsSeeder(session).clear()
         ReactionSeeder(session).clear()
         PostSeeder(session).clear()
         tasks_seeder(session).clear()

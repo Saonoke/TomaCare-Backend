@@ -4,7 +4,7 @@ from sqlmodel import Session
 from controllers import PostController
 from database.database import get_session
 from database.schema import PostInput, PostResponse, ReactionInput
-from database.schema.post_schema import ReactionResponse, PostResponseGet
+from database.schema.post_schema import ReactionResponse, PostResponseGet,CommentInput,CommentResponse
 from model import Reaction
 
 post_router = APIRouter(
@@ -44,6 +44,16 @@ async def delete(request: Request, _id : int,session:Session = Depends(get_sessi
     return   controller.delete(_id)
 
 @post_router.post("/{_id}/reaction", response_model=ReactionResponse, status_code=200)
-async def delete(request: Request, reaction: ReactionInput, _id : int,session:Session = Depends(get_session)):
+async def reaction(request: Request, reaction: ReactionInput, _id : int,session:Session = Depends(get_session)):
     controller = PostController(session, user=request.state.user)
     return controller.reaction(_id, reaction)
+
+@post_router.post("/{_id}/comment",status_code=200,response_model=CommentResponse)
+async def add_comment(request: Request, _id : int,comment : CommentInput,session:Session = Depends(get_session)):
+    controller = PostController(session, user=request.state.user)
+    return   controller.add_comment(_id,comment)
+
+@post_router.delete("/{_id}/comment/{_comment_id}",status_code=200)
+async def del_comment(request: Request, _id : int,_comment_id : int,session:Session = Depends(get_session)):
+    controller = PostController(session, user=request.state.user)
+    return   controller.del_comment(_id,_comment_id)

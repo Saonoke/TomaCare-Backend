@@ -10,3 +10,5 @@ from database.repository.impl.image_repo import ImageRepository
 from database.repository.meta.image_repo_meta import ImageRepositoryMeta
 from database.repository.meta.reaction_repo_meta import ReactionRepositoryMeta
 from database.repository.impl.reaction_repo import ReactionRepository
+from database.repository.meta.comment_repo_meta import CommentRepositoryMeta
+from database.repository.impl.comment_repo import CommentRepository
