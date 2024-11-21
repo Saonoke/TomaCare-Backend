@@ -30,13 +30,16 @@ class PostService(PostServiceMeta):
 
     def __post_model2schema(self, model: Posts)-> Optional[PostResponse]:
         model_dump = model.model_dump()
+        model_dump['image_url'] = model.image.image_path
         model_dump["count_like"] = len([x for x in model.users_links if str(x.reaction_type) == str(ReactionEnum.LIKE)])
         model_dump["count_dislike"] = len([x for x in model.users_links if str(x.reaction_type) == str(ReactionEnum.DISLIKE)])
         model_dump["liked"] = len([x for x in model.users_links if (x.users_id == self._user.id) and (str(x.reaction_type) == str(ReactionEnum.LIKE))]) == 1
         model_dump["disliked"] = len([x for x in model.users_links if (x.users_id == self._user.id) and (str(x.reaction_type) == str(ReactionEnum.DISLIKE))]) == 1
         model_dump["comments"] = [CommentResponse(**comment.model_dump()) for comment in model.users_comments]
+        model_dump['user'] = model.user.model_dump()
+        model_dump['user']['profile_img'] = model.user.profile.image_path
         return PostResponseGet(**model_dump)
-    
+
 
     def get_all(self) -> List[Optional[PostResponse]]:
         posts = self._post_repository.get_all()
@@ -54,7 +57,7 @@ class PostService(PostServiceMeta):
             return self.__post_model2schema(
                 self._post_repository.get_by_id(_id)
             )
-    
+
     def get_by_user_id(self, _user_id : int) -> List[Optional[PostResponse]]:
         if not self._post_repository.get_by_user_id(_user_id):
             raise HTTPException(status_code=404, detail="User ID not found")
@@ -78,7 +81,7 @@ class PostService(PostServiceMeta):
             print(e)
             self.session.rollback()
             raise HTTPException(status_code=400, detail="Create Failed")
-        
+
 
     def edit(self,post: PostInput,_id: int) -> PostResponse:
         dbpost = self._post_repository.get_by_id(_id)
@@ -139,7 +142,7 @@ class PostService(PostServiceMeta):
             'action': _type.type,
             'success':True
         }
-    
+
     def add_comment(self, _post_id: int, _comment: CommentInput) -> CommentResponse:
         if not self._post_repository.get_by_id(_post_id):
             raise HTTPException(status_code=404, detail="Posts not found")
