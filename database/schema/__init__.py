@@ -5,4 +5,5 @@ from database.schema.post_schema import PostInput,PostResponse
 from database.schema.image_schema import ImageBase,ImageResponse
 from database.schema.user_schema import UserUpdate
 from database.schema.post_schema import PostInput,PostResponse, ReactionInput,CommentResponse,CommentInput
+from database.schema.information_schema import InformationResponse
 
