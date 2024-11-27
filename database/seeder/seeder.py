@@ -1,4 +1,5 @@
 from database.seeder.comment_seeder import CommentsSeeder
+from database.seeder.information_seeder import InformationSeeder
 from .user_seeder import users_seeder
 from .plants_seeder import plants_seeder
 from .task_seeder import tasks_seeder
@@ -35,6 +36,7 @@ engine = create_engine(DATABASE_URL)
 def up():
     with Session(engine) as session:
         ImagesSeeder(session).execute()
+        InformationSeeder(session).execute()
         users_seeder(session).execute()
         plants_seeder(session).execute()
         tasks_seeder(session).execute()
@@ -51,6 +53,7 @@ def down():
         tasks_seeder(session).clear()
         plants_seeder(session).clear()
         users_seeder(session).clear()
+        InformationSeeder(session).clear()
         ImagesSeeder(session).clear()
 
 
