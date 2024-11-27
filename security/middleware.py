@@ -1,14 +1,20 @@
+import hashlib
+
 from fastapi import Request
 from fastapi.responses import JSONResponse
-from jose import JWTError
+from jose import JWTError, ExpiredSignatureError
 from sqlmodel import Session
 from starlette.middleware.base import BaseHTTPMiddleware
 from datetime import datetime, timedelta
+import re
 
 from config import RATE_LIMIT_REQUESTS, RATE_LIMIT_DURATION
 from database import engine
+from database.schema import TokenData
+from database.schema.auth_schema import TokenType
 from model import Users
-from utils.token_utils import decode_access_token
+from utils.token_utils import decode_token, clear_exp_issued_token, is_login
+
 
 class RateLimitingMiddleware(BaseHTTPMiddleware):
     # Rate limiting configurations
@@ -51,15 +57,23 @@ class RateLimitingMiddleware(BaseHTTPMiddleware):
 
 
 class AuthMiddleware(BaseHTTPMiddleware):
-    _whitelist_endpoints = [
-        '/docs',
-        '/openapi.json',
-        '/',
-        '/auth',
-        '/auth/token',
-        '/auth/google',
-        '/auth/google-url',
-    ]
+    _whitelist_endpoints = {
+        'GET': [
+            r'^/$',
+            r'^/docs$',  # /docs
+            r'^/openapi\.json$',  # /openapi.json
+            r'^/auth/google$',  # /auth/google
+            r'^/auth/google-url$',  # /auth/google-url
+        ],
+        'POST': [
+            r'^/auth$',  # /auth
+            r'^/auth/token$',  # /auth/token
+            r'^/auth/refresh$',  # /auth/token
+        ],
+        'PUT': [],
+        'PATCH': [],
+        'DELETE': []
+    }
 
     def __init__(self, app):
         super().__init__(app)
@@ -80,34 +94,55 @@ class AuthMiddleware(BaseHTTPMiddleware):
         """
             Will return True when accessing whitelisted route.
         """
-        if self.__get_route(str(request.url)) in self._whitelist_endpoints:
-            return True
+        for pattern in self._whitelist_endpoints[request.method]:
+            if re.match(pattern, self.__get_route(str(request.url))):
+                return True
         return False
 
     async def dispatch(self, request, call_next):
         try:
+            # Bypass middleware untuk route whitelist
             if self.__check_whitelist_route(request):
-                response = await call_next(request)
-                return response
+                return await call_next(request)
 
-            clear_token = self.__get_clear_token(request.headers['authorization'])
-            payload = decode_access_token(clear_token)
+            # Validasi Authorization header
+            auth_header = request.headers.get('authorization')
+            if not auth_header:
+                return JSONResponse(status_code=400, content={'detail': 'Access-token header is not set'})
 
+            # Decode token
+            clear_token = self.__get_clear_token(auth_header)
+            try:
+                payload = decode_token(clear_token)
+            except ExpiredSignatureError:
+                return JSONResponse(status_code=401, content={'detail': 'Signature has expired.'})
+            except JWTError:
+                return JSONResponse(status_code=401, content={'detail': 'Invalid token!'})
+
+            # Validasi tipe token
+            if payload.get('type') != TokenType.ACCESS.value:
+                return JSONResponse(status_code=401, content={'detail': 'Invalid token type!'})
+
+            # Ambil jti dan validasi login status
+            jti_access = payload['jti']
             with Session(engine) as session:
-                user = session.get(Users, payload.id)
-        except JWTError as e:
-            if str(e) == 'Signature has expired.':
-                return JSONResponse(status_code=401, content={'detail': str(e)})
+                if not is_login(session, jti_access):
+                    return JSONResponse(status_code=401, content={'detail': 'Token has expired.'})
+
+                # Hapus token kadaluwarsa
+                clear_exp_issued_token(session)
+
+                # Ambil data user
+                user = session.get(Users, payload['id'])
+                if not user:
+                    return JSONResponse(status_code=403, content={'detail': 'User not found.'})
+
+            # Simpan user dan jti di state request
+            request.state.user = user
+            request.state.jti_access = jti_access
+
+            return await call_next(request)
+
         except Exception as e:
-            if str(e) == "'authorization'":
-                return JSONResponse(status_code=400, content={
-                    'detail': 'Access-token header is not set'
-                })
-            return JSONResponse(status_code=401, content={'detail':'Could not validate user.'})
-
-        if not user:
-            return JSONResponse(content={'detail':'The owner of this access token has not been found'}, status_code=403)
-
-        request.state.user = user
-        response = await call_next(request)
-        return response
+            print(e)
+            return JSONResponse(status_code=500, content={'detail': 'Something went wrong in our end !'})

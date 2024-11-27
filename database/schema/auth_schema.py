@@ -1,3 +1,5 @@
+from enum import Enum
+
 from pydantic import BaseModel, EmailStr, Field
 
 class UserResponse(BaseModel):
@@ -46,10 +48,17 @@ class UserInfoGoogle(BaseModel):
     family_name: str
     picture: str
 
+class TokenType(str, Enum):
+    ACCESS = 'ACCESS'
+    REFRESH = 'REFRESH'
+
 class Token(BaseModel):
+    refresh_token: str
     access_token: str
-    token_type: str
 
 class TokenData(BaseModel):
-    id: str | None = None
+    id: int | None = None
     username: str | None = None
+
+class RefreshInput(BaseModel):
+    refresh_token: str

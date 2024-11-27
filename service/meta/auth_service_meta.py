@@ -1,6 +1,8 @@
 from abc import abstractmethod
 
 from database.schema import UserResponse, UserRegister, UserLogin, Token, UserInfoGoogle
+from model import Users
+
 
 class AuthServiceMeta:
 
@@ -21,7 +23,11 @@ class AuthServiceMeta:
         pass
 
     @abstractmethod
-    def refresh_token(self, token: str):
+    def update_token(self, token: str):
+        pass
+
+    @abstractmethod
+    def logout(self, jti: str) -> bool:
         pass
 
     @abstractmethod
