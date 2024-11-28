@@ -6,6 +6,7 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 SECRET_KEY = os.getenv("SECRET_KEY")
 EXPIRATION_TIME = int(os.getenv("EXPIRATION_TIME"))
+REFRESH_TOKEN_EXPIRATION_TIME = int(os.getenv("REFRESH_TOKEN_EXPIRATION_TIME"))
 JWT_ALG = 'HS256'
 
 # Google API Creds

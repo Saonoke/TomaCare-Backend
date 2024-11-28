@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException
 from database.database import get_session
 from sqlmodel import Session
-from database.schema import UserLogin, UserRegister, UserResponse, Token, TokenData
+from database.schema import UserLogin, UserRegister, Token, TokenData
 from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_REDIRECT_URL
 from model import Users
 from controllers.base_controller import BaseController
@@ -22,12 +22,25 @@ class AuthController(BaseController):
         except Exception as e:
             return self.ise(e)
 
-    def login(self, user: UserLogin) -> UserResponse:
+    def login(self, user: UserLogin) -> Token:
         try:
             return self._user_service.authenticate_user(user)
         except Exception as e:
             if isinstance(e, HTTPException):
                 raise e
+            return self.ise(e)
+
+    def logout(self, jti: str) -> dict[str, bool]:
+        return {
+            'success': self._user_service.logout(jti)
+        }
+
+    def refresh_token(self, refresh_token: str) -> Token:
+        try:
+            return self._user_service.update_token(refresh_token)
+        except HTTPException as e:
+            raise e
+        except Exception as e:
             return self.ise(e)
 
     @staticmethod

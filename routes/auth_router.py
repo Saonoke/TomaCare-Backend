@@ -1,19 +1,19 @@
-from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Optional
+
+from fastapi import APIRouter, Depends, Request
 from sqlmodel import Session
 
 from database.database import get_session
 from database.schema import Token, UserLogin, UserRegister, UserResponse, TokenData
 
-from utils.token_utils import get_current_user
 from controllers.auth_controller import AuthController
+from database.schema.auth_schema import RefreshInput
 
 auth_router = APIRouter(
     prefix="/auth",
     tags=["Auth"],
 )
 
-user_dependency = Annotated[TokenData, Depends(get_current_user)]
 
 @auth_router.post("", response_model=UserResponse , status_code=201)
 async def register_user(user: UserRegister, session:Session = Depends(get_session)):
@@ -36,7 +36,12 @@ async def auth_google(code: str, session:Session = Depends(get_session)):
     controller = AuthController(session)
     return controller.google_token(code)
 
-@auth_router.get("/test" ,status_code=200, response_model=TokenData)
-async def test(user: user_dependency, session:Session = Depends(get_session)):
+@auth_router.post("/logout")
+async def logout(request: Request, session: Session = Depends(get_session)):
     controller = AuthController(session)
-    return controller.userinfo(user)
+    return controller.logout(request.state.jti_access)
+
+@auth_router.post("/refresh", response_model=Optional[Token])
+async def refresh(refresh_token: RefreshInput,session: Session = Depends(get_session)):
+    controller = AuthController(session)
+    return controller.refresh_token(refresh_token)
