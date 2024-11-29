@@ -9,9 +9,10 @@ class TaskService(TaskServiceMeta):
         self.session = session
         self._task_repository : TaskRepositoryMeta = TaskRepository(self.session)
 
-    def create_task(self, data: TaskCreate) -> TaskShow:
+    def create_task(self,) -> TaskShow:
         # id plant
         try:
+            data = list(Task)
             task = self._task_repository.create(data)
         except Exception as e:
             raise e

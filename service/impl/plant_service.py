@@ -5,7 +5,7 @@ from sqlmodel import Session
 from database.repository import PlantRepositoryMeta,PlantRepository,ImageRepositoryMeta,ImageRepository
 from database.schema import PlantBase,PlantCreate,PlantShow,PlantUpdate
 from model import Users,Images,Plants
-from service import PlantServiceMeta
+from service import PlantServiceMeta, TaskServiceMeta
 
 
 class PlantService(PlantServiceMeta):
@@ -15,15 +15,16 @@ class PlantService(PlantServiceMeta):
         self._plant_repository : PlantRepositoryMeta = PlantRepository(self.session)
         self._user: Users = user
         self._image_repository :ImageRepositoryMeta = ImageRepository(self.session)
+        
 
-    def create_plant(self, data: PlantCreate) -> PlantShow:
+    def create_plant(self, data: PlantCreate) :
         try:
-            data.user_id = self._user.id
+      
+            user_id = self._user.id
             image = Images(image_path=data.image_path)
             image_id = self._image_repository.create(image)
-            plant = Plants(title=data.title,condition=data.condition,user_id=data.user_id,image_id=image_id)
+            plant = Plants(title=data.title,condition=data.condition,user_id=user_id,image_id=image_id)
             plant = self._plant_repository.create(plant)
-    
             self.session.commit()
             return plant
         except Exception as e:

@@ -1,7 +1,8 @@
-from sqlmodel import select, Session
+from sqlmodel import select, Session, join
 from database.repository.meta import PlantRepositoryMeta
-from model import Plants
-from database.schema import PlantCreate, PlantUpdate
+from model import Plants, Images
+from database.schema import PlantCreate, PlantUpdate, PlantShow, ImageResponse
+from sqlalchemy.orm import joinedload
 
 
 class PlantRepository(PlantRepositoryMeta):
@@ -42,10 +43,24 @@ class PlantRepository(PlantRepositoryMeta):
 
     
     def getAll(self, _user_id: int):
-       plants = self.session.exec(select(Plants).where(Plants.user_id == _user_id)).all()
+       plants = self.session.exec(select(Plants, Images).join(Images).where(Plants.user_id == _user_id)).all()
        if not plants:
            return []
-       return plants
+       plants_with_images = []
+       for plant,image in plants:
+        plants_with_images.append(
+                       PlantShow(
+               id= plant.id,
+               title=plant.title,
+               condition=plant.condition,
+               image= ImageResponse(
+                   id=image.id,
+                   image_path= image.image_path
+               )
+           )
+        )
+       
+       return plants_with_images
     
     
     

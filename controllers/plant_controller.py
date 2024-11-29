@@ -1,9 +1,9 @@
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, UploadFile
 from database.database import get_session
 from sqlmodel import Session
 from database.schema import PlantBase, PlantCreate, PlantUpdate, PlantShow, TaskUpdate, TaskCreate, TaskShow
 from model import Users
-from service import PlantService, PlantServiceMeta, TaskServiceMeta, TaskService
+from service import PlantService, PlantServiceMeta, TaskServiceMeta, TaskService, MachinelearningMeta, MachineLearningService
 
 from controllers.base_controller import BaseController
 
@@ -12,6 +12,8 @@ class PlantController(BaseController):
     def __init__(self, user: Users, session:Session):
         self._plant_service : PlantServiceMeta = PlantService(user, session)
         self._task_service : TaskServiceMeta = TaskService(session)
+        self._machine_learning_service : MachinelearningMeta = MachineLearningService()
+
 
     def create_plant (self,data:PlantCreate) -> PlantCreate:
         try:
@@ -25,7 +27,7 @@ class PlantController(BaseController):
         except Exception as e:
             raise self.ise(e)
     
-    def get_all_plan(self)->list[PlantShow]:
+    def get_all_plan(self):
         try:
             plan =self._plant_service.show_all_plant()
         except Exception as e:
@@ -62,6 +64,12 @@ class PlantController(BaseController):
     def delete_task(self,task_id:int):
         try:
             return self._task_service.delete_task(task_id)
+        except Exception as e:
+            raise self.ise(e)
+    
+    def machine_learning_process(self, file):
+        try:
+            return self._machine_learning_service.machine_learning_process(file)
         except Exception as e:
             raise self.ise(e)
     
