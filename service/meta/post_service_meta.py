@@ -7,7 +7,7 @@ from database.schema  import PostInput,PostResponse,ReactionInput,CommentInput
 
 class PostServiceMeta:
     @abstractmethod
-    def get_all(self) -> List[Optional[PostResponse]]:
+    def get_all(self, search: Optional[str], limit: int) -> List[Optional[PostResponse]]:
         pass
     @abstractmethod
     def add(self, post: PostInput) -> PostResponse:
