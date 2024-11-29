@@ -1,5 +1,6 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, Request
+from fastapi.params import Query
 from sqlmodel import Session
 from controllers import PostController
 from database.database import get_session
@@ -14,9 +15,13 @@ post_router = APIRouter(
 
 
 @post_router.get("/",response_model=List[PostResponseGet],status_code=200)
-async def get_all(request: Request, session:Session = Depends(get_session)):
+async def get_all(
+        request: Request,
+        search: Optional[str] = Query(None, description="Search by post"),
+        limit: Optional[int] = 10,
+        session:Session = Depends(get_session)):
     controller = PostController(session, user=request.state.user)
-    return  controller.get_all()
+    return  controller.get_all(search=search, limit=limit)
 
 @post_router.get("/{_id}", response_model=PostResponseGet,status_code=200)
 async def get_by_id(request: Request, _id : int,session:Session = Depends(get_session)):

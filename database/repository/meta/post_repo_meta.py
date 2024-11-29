@@ -1,11 +1,11 @@
 from abc import abstractmethod
-from typing import List
+from typing import List, Optional
 
 from model import Posts     
 
 class PostRepositoryMeta:
     @abstractmethod
-    def get_all(self) ->List[Posts] :
+    def get_all(self, search: Optional[str], limit: int) ->List[Posts] :
         pass
 
     @abstractmethod

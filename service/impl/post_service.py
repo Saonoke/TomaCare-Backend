@@ -41,8 +41,8 @@ class PostService(PostServiceMeta):
         return PostResponseGet(**model_dump)
 
 
-    def get_all(self) -> List[Optional[PostResponse]]:
-        posts = self._post_repository.get_all()
+    def get_all(self, search: Optional[str], limit: int = 10) -> List[Optional[PostResponse]]:
+        posts = self._post_repository.get_all(search=search, limit=limit)
         responses = []
         for post in posts:
             responses.append(

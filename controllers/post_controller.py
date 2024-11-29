@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from fastapi import Depends
 from sqlmodel import Session
 from controllers.base_controller import BaseController
@@ -14,9 +14,9 @@ class  PostController(BaseController):
     def __init__(self,session:Session, user: Users = Users()):
         self._post_service : PostServiceMeta = PostService(session, user= user)
     
-    def get_all(self) ->List[PostResponse]:
+    def get_all(self, search: Optional[str] = None, limit: int = 10) ->List[PostResponse]:
         try: 
-            posts = self._post_service.get_all()
+            posts = self._post_service.get_all(search=search, limit=limit)
             return [PostResponse.model_validate(post) for post in posts]
         except Exception as e:
             return e
