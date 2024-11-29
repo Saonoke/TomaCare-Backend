@@ -6,4 +6,6 @@ from database.schema.image_schema import ImageBase,ImageResponse
 from database.schema.user_schema import UserUpdate
 from database.schema.post_schema import PostInput,PostResponse, ReactionInput,CommentResponse,CommentInput
 from database.schema.information_schema import InformationResponse
+from database.schema.machine_learning_schema import MachineLearningResponse
+
 

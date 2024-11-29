@@ -7,3 +7,4 @@ class Images(SQLModel, table=True):
 
     user: 'Users' = Relationship(back_populates='profile')
     post: 'Posts' = Relationship(back_populates='image')
+    plant: 'Plants' = Relationship(back_populates='image')
