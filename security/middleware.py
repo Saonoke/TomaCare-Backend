@@ -69,6 +69,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
             r'^/auth$',  # /auth
             r'^/auth/token$',  # /auth/token
             r'^/auth/refresh$',  # /auth/token
+            r'^/auth/google$',  # /auth/google
         ],
         'PUT': [],
         'PATCH': [],

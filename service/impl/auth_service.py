@@ -7,12 +7,12 @@ from jose import ExpiredSignatureError, JWTError
 from sqlmodel import Session
 from database.repository import UserRepositoryMeta, UserRepository
 from database.schema import TokenData, UserInfoGoogle, Token, UserLogin, UserResponse, UserRegister
-from database.schema.auth_schema import TokenType, RefreshInput
+from database.schema.auth_schema import TokenType, RefreshInput, GoogleToken
 from service import AuthServiceMeta
 from model import Users, IssuedAccessToken, IssuedRefreshToken
 from utils import get_password_hash, verify_password, create_refresh_token, decode_token
 from utils.token_utils import create_access_token
-from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_REDIRECT_URL, GOOGLE_CLIENT_SECRET, EXPIRATION_TIME, REFRESH_TOKEN_EXPIRATION_TIME
+from config import EXPIRATION_TIME, REFRESH_TOKEN_EXPIRATION_TIME
 
 
 class AuthService(AuthServiceMeta):
@@ -74,19 +74,12 @@ class AuthService(AuthServiceMeta):
             return False
         return True
 
-    def authenticate_google(self, code: str) -> Token:
-        token_url = "https://accounts.google.com/o/oauth2/token"
-        data = {
-            "code": code,
-            "client_id": GOOGLE_CLIENT_ID,
-            "client_secret": GOOGLE_CLIENT_SECRET,
-            "redirect_uri": GOOGLE_CLIENT_REDIRECT_URL,
-            "grant_type": "authorization_code",
-        }
-        response = requests.post(token_url, data=data)
-        access_token = response.json().get("access_token")
+    def authenticate_google(self, google_access_token: GoogleToken) -> Token:
+        try:
+            user_info = self.__get_user_info(google_access_token.google_access_token)
+        except Exception as e:
+            raise HTTPException(status_code=401, detail='Invalid token!')
 
-        user_info = self.__get_user_info(access_token)
         if not self._user_repository.get_by_email(user_info.email):
             try:
                 username = user_info.email.split('@')[0]

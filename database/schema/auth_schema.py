@@ -53,8 +53,8 @@ class TokenType(str, Enum):
     REFRESH = 'REFRESH'
 
 class Token(BaseModel):
-    refresh_token: str
     access_token: str
+    refresh_token: str
 
 class TokenData(BaseModel):
     id: int | None = None
@@ -62,3 +62,6 @@ class TokenData(BaseModel):
 
 class RefreshInput(BaseModel):
     refresh_token: str
+
+class GoogleToken(BaseModel):
+    google_access_token: str

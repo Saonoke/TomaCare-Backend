@@ -12,7 +12,6 @@ class PostResponse(BaseModel):
     body : str
     # user_id : int
     image_id : int | None = None
-    comments : list[CommentResponse]
 
     class Config:
         from_attributes = True
@@ -20,9 +19,12 @@ class PostResponse(BaseModel):
 class PostUserProfile(BaseModel):
     id: int
     full_name: str
+    email: str
+    username: str
     profile_img: str
 
 class PostResponseGet(PostResponse):
+    comments : list[CommentResponse] | None = None
     image_url: str
     user: PostUserProfile
     count_like : int

@@ -7,7 +7,7 @@ from database.database import get_session
 from database.schema import Token, UserLogin, UserRegister, UserResponse, TokenData
 
 from controllers.auth_controller import AuthController
-from database.schema.auth_schema import RefreshInput
+from database.schema.auth_schema import RefreshInput, GoogleToken
 
 auth_router = APIRouter(
     prefix="/auth",
@@ -26,15 +26,10 @@ async def login_user(user: UserLogin, session: Session = Depends(get_session)):
     controller = AuthController(session)
     return controller.login(user)
 
-@auth_router.get("/google-url")
-async def login_google(session:Session = Depends(get_session)):
+@auth_router.post("/google", response_model=Token)
+async def auth_google(token: GoogleToken, session:Session = Depends(get_session)):
     controller = AuthController(session)
-    return controller.google_url()
-
-@auth_router.get("/google", response_model=Token)
-async def auth_google(code: str, session:Session = Depends(get_session)):
-    controller = AuthController(session)
-    return controller.google_token(code)
+    return controller.google_token(token)
 
 @auth_router.post("/logout")
 async def logout(request: Request, session: Session = Depends(get_session)):
