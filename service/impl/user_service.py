@@ -4,6 +4,7 @@ from sqlmodel import Session
 
 from database.repository import UserRepository, UserRepositoryMeta,ImageRepository,ImageRepositoryMeta
 from database.schema.auth_schema import UserResponse
+from database.schema.user_schema import UserResponseProfile
 from model import Users,Images
 from service.meta import UserServiceMeta
 from utils.hashing import get_password_hash, verify_password
@@ -17,10 +18,14 @@ class UserService(UserServiceMeta):
         self._user_repository = UserRepository(session)
         self._image_repository :ImageRepositoryMeta = ImageRepository(self.session)
 
-    def __user_model2schema(self, model: Users)-> Optional[UserResponse]:
+    def __user_model2schema(self, model: Users)-> Optional[UserResponseProfile]:
         model_dump = model.model_dump()
         model_dump['profile_img'] = model.profile.image_path
-        return UserResponse(**model_dump)
+        if model.password != '-':
+            model_dump['hasPassword'] = True
+        else:
+            model_dump['hasPassword'] = False
+        return UserResponseProfile(**model_dump)
 
     def get(self, _id: int):
         try:
@@ -42,22 +47,24 @@ class UserService(UserServiceMeta):
             if user_exist and (user_exist.id != _id):
                 raise HTTPException(status_code=400, detail="User with this username already exists.")
 
-            try :
-                if user_exist.profile_img == None :
+            try:
+                user_exist = self._user_repository.get_by_id(_id)
+                if user_exist and user_exist.profile_img is None:
                     image_id = self._image_repository.create(Images(image_path=user_data.profile_img))
                     data =  Users(id= _id,email=user_data.email,full_name=user_data.full_name,username=user_data.username,profile_img=image_id)
                 else : 
                     image = Images(image_path=user_data.profile_img)
-                    self._image_repository.edit(user_exist.profile_img,image)
+                    self._image_repository.edit(user_exist.profile_img, image)
                     data =  Users(id= _id,email=user_data.email,full_name=user_data.full_name,username=user_data.username,profile_img=user_exist.profile_img)
                 
                 result = self._user_repository.edit(data, _id)
                 result = self.__user_model2schema(result)
                 self.session.commit()
                 return result
-            except :
-                 self.session.rollback()
-                 raise HTTPException(status_code=400, detail="Edit Failed.")
+            except Exception as e:
+                print(e)
+                self.session.rollback()
+                raise HTTPException(status_code=400, detail="Edit Failed.")
 
         except HTTPException as e:
             raise e
@@ -74,7 +81,8 @@ class UserService(UserServiceMeta):
             new_pass = get_password_hash(_new_pass)
             user.password = new_pass
 
-            return self._user_repository.edit(user, _id)
+            res = self.__user_model2schema(self._user_repository.edit(user, _id))
+            return res
 
         except HTTPException as e:
             raise e
@@ -89,7 +97,7 @@ class UserService(UserServiceMeta):
             new_pass = get_password_hash(_pass)
             user.password = new_pass
 
-            return self._user_repository.edit(user, _id)
+            return self.__user_model2schema(self._user_repository.edit(user, _id))
 
         except HTTPException as e:
             raise e
