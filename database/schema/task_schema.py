@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from datetime import date
 
 class TaskBase(BaseModel):
     title: str | None = None
@@ -7,6 +8,7 @@ class TaskBase(BaseModel):
 class TaskCreate(TaskBase):
     plant_id : int 
     id : int | None= None
+    tanggal : date 
 
 class TaskShow(TaskBase):
     pass

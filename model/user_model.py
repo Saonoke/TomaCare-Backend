@@ -12,7 +12,6 @@ class Users(SQLModel, table=True):
     full_name: str = Field(max_length=200)
     password: str = Column(String(200))
     profile_img: int | None = Field(default=None,foreign_key="images.id")
-
     posts_links: list[Reaction] = Relationship(back_populates="user")
     posts_comments: list[Comments] = Relationship(back_populates="user")
     posts: list['Posts'] = Relationship(back_populates='user')

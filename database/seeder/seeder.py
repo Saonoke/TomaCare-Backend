@@ -6,6 +6,7 @@ from .task_seeder import tasks_seeder
 from .post_seeder import PostSeeder
 from .reaction_seeder import ReactionSeeder
 from .images_seeder import ImagesSeeder
+from .token_seeder import token_seeder
 
 # from sqlalchemy import create_engine
 from sqlmodel import create_engine, Session
@@ -34,6 +35,7 @@ engine = create_engine(DATABASE_URL)
 
    
 def up():
+    print('add seeder')
     with Session(engine) as session:
         ImagesSeeder(session).execute()
         InformationSeeder(session).execute()
@@ -46,7 +48,9 @@ def up():
 
 
 def down():
+    print('remove seeder')
     with Session(engine) as session:
+        token_seeder(session).clear()
         CommentsSeeder(session).clear()
         ReactionSeeder(session).clear()
         PostSeeder(session).clear()

@@ -8,7 +8,7 @@ class plants_seeder():
     @staticmethod
     def create_plants():
         plants = [
-            Plants(id= 1, user_id=1, title="tes",condition="sakit",image_id=2),
+            Plants(id= 1, user_id=1, title="tes",condition="bacterial_spot",image_id=2),
         ]
         return plants
 
