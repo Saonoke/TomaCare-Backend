@@ -38,10 +38,10 @@ class PlantController(BaseController):
         try:
             # gabungkan di service layer
             plant = self._plant_service.show_plant(plant_id)
-
+    
         except Exception as e:
             raise self.ise(e)
-        return {"plant" : plant , "task" : plant.task}
+        return {"plant" : plant , "task" : plant.task, "image" : plant.image}
         
     def delete_plan(self,plant_id:int)->PlantBase:
         try:

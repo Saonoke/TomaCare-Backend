@@ -8,8 +8,8 @@ class tasks_seeder():
     @staticmethod
     def create_task():
         tasks= [
-            Task(id=1,plant_id=1,title="water"),
-            Task(id=2,plant_id=1,title="haha"),
+            Task(id=1,plant_id=1,title="water",tanggal="2024/05/12"),
+            Task(id=2,plant_id=1,title="haha",tanggal="2024/05/12"),
         ]
         return tasks
 

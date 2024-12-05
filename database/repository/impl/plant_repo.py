@@ -14,7 +14,7 @@ class PlantRepository(PlantRepositoryMeta):
         self.session.add(model)
         self.session.flush()
         return model
-        
+        p
     def update(self,model: PlantUpdate,_id:int) -> Plants:
         plant = self.session.get(Plants,_id)
         if not plant:

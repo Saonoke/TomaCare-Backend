@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, Field, Column, VARCHAR,Enum,  Relationship
-import enum
+from enumeration import penyakitEnum
 
 
 from typing import TYPE_CHECKING, Optional
@@ -7,9 +7,7 @@ from typing import TYPE_CHECKING, Optional
 if TYPE_CHECKING:
     from model import Task
 
-class penyakitEnum(enum.Enum):
-    SEHAT='Sehat'
-    SAKIT='Sakit'
+
 
 class Plants(SQLModel,table = True):
     id: int = Field(primary_key=True, sa_column_kwargs={'autoincrement': True})
