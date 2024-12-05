@@ -3,7 +3,7 @@ from sqlmodel import Session
 
 from database.database import get_session
 from database.schema import  UserResponse
-from database.schema.user_schema import UserUpdate, UserChangePassword, UserCreatePassword
+from database.schema.user_schema import UserUpdate, UserChangePassword, UserCreatePassword, UserResponseProfile
 # from security.middleware import AuthMiddleware
 from controllers import UserController
 
@@ -12,7 +12,7 @@ user_router = APIRouter(
     tags=["User"],
 )
 
-@user_router.get("", response_model=UserResponse)
+@user_router.get("", response_model=UserResponseProfile)
 async def get_user(request: Request, session: Session = Depends(get_session)):
     controller = UserController(session)
     return controller.get(request)

@@ -38,7 +38,7 @@ async def add(request: Request, postInput : PostInput,session:Session = Depends(
     controller = PostController(session, user=request.state.user)
     return  controller.add(postInput)
 
-@post_router.post("/{_id}", response_model=Optional[PostResponse],status_code=201)
+@post_router.put("/{_id}", response_model=Optional[PostResponse],status_code=201)
 async def edit(request: Request, postInput : PostInput,_id : int,session:Session = Depends(get_session)):
     controller = PostController(session, user=request.state.user)
     return  controller.edit(postInput,_id)

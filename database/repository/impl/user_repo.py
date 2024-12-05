@@ -34,7 +34,8 @@ class UserRepository(UserRepositoryMeta):
         user_data = model.model_dump(exclude_unset=True)
         db_user.sqlmodel_update(user_data)
         self.session.add(db_user)
-        self.session.flush()
+        self.session.commit()
+        self.session.refresh(db_user)
         return db_user
 
     def add(self, model: Users ) -> Users:

@@ -25,6 +25,7 @@ class PostUserProfile(BaseModel):
     profile_img: str
 
 class PostResponseGet(PostResponse):
+    comments : list[CommentResponse] | None = None
     image_url: str
     user: PostUserProfile
     count_like : int
