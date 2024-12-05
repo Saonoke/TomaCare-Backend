@@ -12,6 +12,7 @@ class PostResponse(BaseModel):
     body : str
     # user_id : int
     image_id : int | None = None
+    comments : list[CommentResponse] |None = None
 
     class Config:
         from_attributes = True
@@ -19,8 +20,8 @@ class PostResponse(BaseModel):
 class PostUserProfile(BaseModel):
     id: int
     full_name: str
-    email: str
     username: str
+    email: str
     profile_img: str
 
 class PostResponseGet(PostResponse):

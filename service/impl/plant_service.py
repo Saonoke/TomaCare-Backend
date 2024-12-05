@@ -6,6 +6,8 @@ from database.repository import PlantRepositoryMeta,PlantRepository,ImageReposit
 from database.schema import PlantBase,PlantCreate,PlantShow,PlantUpdate
 from model import Users,Images,Plants
 from service import PlantServiceMeta, TaskServiceMeta
+from .task_service import TaskService
+from enumeration import penyakitEnum
 
 
 class PlantService(PlantServiceMeta):
@@ -15,16 +17,22 @@ class PlantService(PlantServiceMeta):
         self._plant_repository : PlantRepositoryMeta = PlantRepository(self.session)
         self._user: Users = user
         self._image_repository :ImageRepositoryMeta = ImageRepository(self.session)
+        self._task_service: TaskServiceMeta = TaskService(self.session)
         
 
     def create_plant(self, data: PlantCreate) :
         try:
-      
             user_id = self._user.id
             image = Images(image_path=data.image_path)
             image_id = self._image_repository.create(image)
-            plant = Plants(title=data.title,condition=data.condition,user_id=user_id,image_id=image_id)
+            condition = penyakitEnum.get_enum_by_value(data.condition)
+            print(condition)
+            if(condition == None):
+                raise HTTPException(status_code=400 ,detail="Create Failed, Penyakit tidak ditemukan")
+            plant = Plants(title=data.title,condition=condition,user_id=user_id,image_id=image_id)
             plant = self._plant_repository.create(plant)
+            task = self._task_service.create_task(condition,plant.id)
+            print(task)
             self.session.commit()
             return plant
         except Exception as e:
