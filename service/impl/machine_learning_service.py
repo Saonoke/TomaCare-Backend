@@ -1,6 +1,7 @@
 from fastapi import  UploadFile
 from database.schema import MachineLearningResponse
 from service.meta import MachinelearningMeta
+from ultralyticsplus import YOLO
 from PIL import Image
 import tensorflow as tf
 import numpy as np
@@ -9,6 +10,31 @@ import cv2
 
 
 class MachineLearningService(MachinelearningMeta):
+    def check_dauntomat(self, image) -> bool:
+        model = YOLO('foduucom/plant-leaf-detection-and-classification')
+
+        # Set model parameters
+        model.overrides['conf'] = 0.25
+        model.overrides['iou'] = 0.45
+        model.overrides['agnostic_nms'] = False
+        model.overrides['max_det'] = 1000
+
+        # Perform inference
+        results = model.predict(image)
+
+        # Get class indices and convert to labels
+        class_indices = results[0].boxes.cls.cpu().numpy()  # Indeks kelas (tensor -> numpy)
+        labels = [model.names[int(idx)] for idx in class_indices]  
+
+
+        for label in labels:
+            if "tomato" in label:
+                print(f"Label: {label} - daun tomat")
+                return True
+            else:
+                print(f"Label: {label} - bukan daun tomat")
+        return False
+
     def machine_learning_process(self, content):
         
         # Mengonversi konten gambar menjadi array numpy menggunakan np.frombuffer
@@ -20,16 +46,11 @@ class MachineLearningService(MachinelearningMeta):
         # Resize gambar sesuai dengan dimensi yang diinginkan (misalnya 256x256)
         img_resized = cv2.resize(img_cv2, (256, 256))
 
-        hsv = cv2.cvtColor(img_resized, cv2.COLOR_BGR2HSV)
-        lower_green = np.array([35, 40, 40])  # Rentang hijau daun
-        upper_green = np.array([85, 255, 255])
-
-        mask = cv2.inRange(hsv, lower_green, upper_green)
-        green_percentage = (np.sum(mask) / (mask.size * 255)) * 100
+        check = self.check_dauntomat(img_resized)
 
           # Jika > 30% dari gambar adalah hijau, mungkin dau
 
-        if green_percentage > 19:
+        if check :
             interpreter = tf.lite.Interpreter(model_path="converted_model.tflite")
             interpreter.allocate_tensors()
             input_details = interpreter.get_input_details()
@@ -53,3 +74,5 @@ class MachineLearningService(MachinelearningMeta):
         else:
             return {"predicted_class": "bukan daun tomat","percentage":0, "predicted_index":0} 
         return {"predicted_class": predicted_class, "percentage":confidence_percentage, "predicted_index":predicted_index}
+
+   
