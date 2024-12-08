@@ -117,8 +117,10 @@ class PostService(PostServiceMeta):
             raise HTTPException(status_code=404, detail="ID not found")
         if post.user_id != self._user.id:
             raise HTTPException(status_code=403, detail="Forbidden: You do not have access to this Post")
-        else :
-            return self._post_repository.delete(_id)
+        else:
+            return {
+                'success': self._post_repository.delete(_id)
+            }
 
     def reaction(self, _post_id: int, _type: ReactionInput) -> bool:
         if not self._post_repository.get_by_id(_post_id):
