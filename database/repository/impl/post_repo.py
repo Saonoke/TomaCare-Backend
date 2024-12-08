@@ -50,7 +50,7 @@ class PostRepository(PostRepositoryMeta):
         results = self.session.exec(statement)
         db_post = results.one()
         if db_post is None:
-            return None
+            return False
         self.session.delete(db_post)
         self.session.commit()
         return True
