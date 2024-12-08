@@ -20,7 +20,11 @@ class UserService(UserServiceMeta):
 
     def __user_model2schema(self, model: Users)-> Optional[UserResponseProfile]:
         model_dump = model.model_dump()
-        model_dump['profile_img'] = model.profile.image_path
+        try:
+            model_dump['profile_img'] = model.profile.image_path
+        except:
+            model_dump['profile_img'] = ''
+
         if model.password != '-':
             model_dump['hasPassword'] = True
         else:

@@ -12,7 +12,7 @@ from database.repository import PostRepository, PostRepositoryMeta, ReactionRepo
 from database.schema import ReactionInput
 from model import Reaction
 from database.schema import PostInput, PostResponse, ReactionInput
-from database.schema.post_schema import CommentInput, ReactionEnum, PostResponseGet,CommentResponse
+from database.schema.post_schema import CommentInput, ReactionEnum, PostResponseGet, CommentResponse, PostUserProfile
 from model.comment_model import Comments
 from service.meta import PostServiceMeta
 from model import Posts, Users, Reaction
@@ -35,7 +35,15 @@ class PostService(PostServiceMeta):
         model_dump["count_dislike"] = len([x for x in model.users_links if str(x.reaction_type) == str(ReactionEnum.DISLIKE)])
         model_dump["liked"] = len([x for x in model.users_links if (x.users_id == self._user.id) and (str(x.reaction_type) == str(ReactionEnum.LIKE))]) == 1
         model_dump["disliked"] = len([x for x in model.users_links if (x.users_id == self._user.id) and (str(x.reaction_type) == str(ReactionEnum.DISLIKE))]) == 1
-        model_dump["comments"] = [CommentResponse(**comment.model_dump()) for comment in model.users_comments]
+        comments = []
+        for comment in model.users_comments:
+            tmp = comment.model_dump()
+            user = comment.user.model_dump()
+            user['profile_img'] = comment.user.profile.image_path
+            tmp['user'] = user
+            tmp['timestamp'] = "5 minutes ago"
+            comments.append(tmp)
+        model_dump["comments"] = comments
         model_dump['user'] = model.user.model_dump()
         model_dump['user']['profile_img'] = model.user.profile.image_path
         return PostResponseGet(**model_dump)
@@ -60,7 +68,7 @@ class PostService(PostServiceMeta):
 
     def get_by_user_id(self, _user_id : int) -> List[Optional[PostResponse]]:
         if not self._post_repository.get_by_user_id(_user_id):
-            raise HTTPException(status_code=404, detail="User ID not found")
+            raise HTTPException(status_code=404, detail="You don't have any posts yet.")
         else:
             posts = self._post_repository.get_by_user_id(_user_id)
             responses = []
@@ -143,19 +151,20 @@ class PostService(PostServiceMeta):
             'success':True
         }
 
-    def add_comment(self, _post_id: int, _comment: CommentInput) -> CommentResponse:
+    def add_comment(self, _post_id: int, _comment: CommentInput) -> PostResponseGet:
         if not self._post_repository.get_by_id(_post_id):
             raise HTTPException(status_code=404, detail="Posts not found")
 
         comment = Comments(post_id=_post_id, user_id=self._user.id, commentary=_comment.commentary)
-        result = self._comment_repository.add(comment)
-        return result
+        self._comment_repository.add(comment)
+        return self.get_by_id(_post_id)
     def del_comment(self, _post_id: int, _comment_id: int) -> bool:
         comment = self._comment_repository.get(_post_id,_comment_id)
         post = self._post_repository.get_by_id(_post_id)
         if not self._post_repository.get_by_id(_post_id):
             raise HTTPException(status_code=404, detail="Posts not found")
-        if (comment.user_id != self._user.id or post.user_id != self._user.id):
+        if comment.user_id != self._user.id and post.user_id != self._user.id:
             raise HTTPException(status_code=403, detail="Forbidden: You do not have access to this Post")
-        else :
-            return self._comment_repository.delete(_post_id,_comment_id)
+        else:
+            self._comment_repository.delete(_post_id, _comment_id)
+            return self.get_by_id(_post_id)

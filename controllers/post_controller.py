@@ -63,8 +63,7 @@ class  PostController(BaseController):
             return self.ise(e)
     
     def del_comment(self,_post_id : int,_comment_id : int) -> bool:
-        print(_post_id,_comment_id)
-        try: 
+        try:
             return self._post_service.del_comment(_post_id,_comment_id)
         except Exception as e:
             return self.ise(e)

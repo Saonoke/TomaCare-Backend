@@ -53,12 +53,12 @@ async def reaction(request: Request, reaction: ReactionInput, _id : int,session:
     controller = PostController(session, user=request.state.user)
     return controller.reaction(_id, reaction)
 
-@post_router.post("/{_id}/comment",status_code=200,response_model=CommentResponse)
+@post_router.post("/{_id}/comment",status_code=200,response_model=PostResponseGet)
 async def add_comment(request: Request, _id : int,comment : CommentInput,session:Session = Depends(get_session)):
     controller = PostController(session, user=request.state.user)
     return   controller.add_comment(_id,comment)
 
-@post_router.delete("/{_id}/comment/{_comment_id}",status_code=200)
+@post_router.delete("/{_id}/comment/{_comment_id}",status_code=200,response_model=PostResponseGet)
 async def del_comment(request: Request, _id : int,_comment_id : int,session:Session = Depends(get_session)):
     controller = PostController(session, user=request.state.user)
     return   controller.del_comment(_id,_comment_id)
