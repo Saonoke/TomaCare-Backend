@@ -16,6 +16,7 @@ from database.schema.post_schema import CommentInput, ReactionEnum, PostResponse
 from model.comment_model import Comments
 from service.meta import PostServiceMeta
 from model import Posts, Users, Reaction
+from utils.date import convert_time
 
 
 class PostService(PostServiceMeta):
@@ -35,13 +36,14 @@ class PostService(PostServiceMeta):
         model_dump["count_dislike"] = len([x for x in model.users_links if str(x.reaction_type) == str(ReactionEnum.DISLIKE)])
         model_dump["liked"] = len([x for x in model.users_links if (x.users_id == self._user.id) and (str(x.reaction_type) == str(ReactionEnum.LIKE))]) == 1
         model_dump["disliked"] = len([x for x in model.users_links if (x.users_id == self._user.id) and (str(x.reaction_type) == str(ReactionEnum.DISLIKE))]) == 1
+        model_dump['created_at'] = convert_time(model.created_at)
         comments = []
         for comment in model.users_comments:
             tmp = comment.model_dump()
             user = comment.user.model_dump()
             user['profile_img'] = comment.user.profile.image_path
             tmp['user'] = user
-            tmp['timestamp'] = "5 minutes ago"
+            tmp['timestamp'] = convert_time(comment.created_at)
             comments.append(tmp)
         model_dump["comments"] = comments
         model_dump['user'] = model.user.model_dump()
@@ -99,8 +101,6 @@ class PostService(PostServiceMeta):
             raise HTTPException(status_code=403, detail="Forbidden: You do not have access to this Post")
         else:
             try :
-                image = Images(image_path=post.image_path)
-                self._image_repository.edit(dbpost.image_id,image)
                 post = Posts(id= _id,title=post.title, body=post.body,user_id=self._user.id)
                 result = self._post_repository.edit(post,_id)
                 self.session.commit()

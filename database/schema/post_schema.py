@@ -26,6 +26,7 @@ class PostResponse(BaseModel):
 
 class PostResponseGet(PostResponse):
     comments : list[CommentResponse] | None = None
+    created_at: str
     image_url: str
     user: PostUserProfile
     count_like : int
@@ -36,8 +37,6 @@ class PostResponseGet(PostResponse):
 class PostInput(BaseModel):
     title : str
     body : str
-    image_path : str
-
 
 class ReactionEnum(str, Enum):
     LIKE = "Like"

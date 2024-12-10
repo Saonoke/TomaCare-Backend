@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlmodel import Field, SQLModel, Relationship
 
 from model.comment_model import Comments
@@ -11,6 +12,7 @@ class Posts(SQLModel, table=True):
     body: str
     user_id: int | None = Field(default=None, foreign_key="users.id")
     image_id: int | None = Field(default=None, foreign_key="images.id")
+    created_at: datetime = Field(default_factory=lambda: datetime.now())
 
     users_links: list[Reaction] = Relationship(
         back_populates="post",
