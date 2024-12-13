@@ -6,3 +6,4 @@ from database.repository.meta.image_repo_meta import ImageRepositoryMeta
 from database.repository.meta.reaction_repo_meta import ReactionRepositoryMeta
 from database.repository.meta.comment_repo_meta import CommentRepositoryMeta
 from database.repository.meta.information_repo_meta import InformationRepositoryMeta
+from database.repository.meta.token_repo_meta import TokenRepositoryMeta

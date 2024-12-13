@@ -16,27 +16,27 @@ auth_router = APIRouter(
 
 
 @auth_router.post("", response_model=UserResponse , status_code=201)
-async def register_user(user: UserRegister, session:Session = Depends(get_session)):
-    controller = AuthController(session)
+async def register_user(request: Request, user: UserRegister, session:Session = Depends(get_session)):
+    controller = AuthController(request, session)
     data = controller.register(user)    
     return data
 
 @auth_router.post("/token", response_model=Token)
-async def login_user(user: UserLogin, session: Session = Depends(get_session)):
-    controller = AuthController(session)
+async def login_user(request: Request, user: UserLogin, session: Session = Depends(get_session)):
+    controller = AuthController(request, session)
     return controller.login(user)
 
 @auth_router.post("/google", response_model=Token)
-async def auth_google(token: GoogleToken, session:Session = Depends(get_session)):
-    controller = AuthController(session)
+async def auth_google(request: Request, token: GoogleToken, session:Session = Depends(get_session)):
+    controller = AuthController(request, session)
     return controller.google_token(token)
 
 @auth_router.post("/logout")
 async def logout(request: Request, session: Session = Depends(get_session)):
-    controller = AuthController(session)
+    controller = AuthController(request, session)
     return controller.logout(request.state.jti_access)
 
 @auth_router.post("/refresh", response_model=Optional[Token])
-async def refresh(refresh_token: RefreshInput,session: Session = Depends(get_session)):
-    controller = AuthController(session)
+async def refresh(request: Request, refresh_token: RefreshInput,session: Session = Depends(get_session)):
+    controller = AuthController(request, session)
     return controller.refresh_token(refresh_token)
