@@ -17,8 +17,8 @@ class TaskRepository(TaskRepositoryMeta):
         return task
     
     def update(self, model:TaskUpdate, _id:int)->Task:
-        print(_id)
         task = self.session.get(Task,_id)
+       
         if not task:
             return None
         task_data = model.model_dump(exclude_unset=True)

@@ -14,6 +14,7 @@ class TaskShow(TaskBase):
     pass
 
 class TaskUpdate(TaskBase):
+    id: int
     pass
 
 

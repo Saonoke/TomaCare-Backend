@@ -27,7 +27,8 @@ Detail Gejala:
 Penyebab:
 - Penyebaran bakteri melalui biji terinfeksi, sisa tanaman, atau air.
                 ''',
-                medicine='Fungisida berbasis tembaga, seperti Copper Hydroxide atau Copper Oxychloride. Contoh produk: Nordox 75 WG, Kocide 3000.'
+                medicine='Fungisida berbasis tembaga, seperti Copper Hydroxide atau Copper Oxychloride. Contoh produk: Nordox 75 WG, Kocide 3000.',
+                type= 'bakteri'
             ), Information(
                 id=2,
                 title='Tomato Early Blight',
@@ -43,7 +44,8 @@ Detail Gejala:
 Penyebab:
 - Penyebaran melalui spora yang terbawa angin, air, atau peralatan.
                 ''',
-                medicine='Fungisida berbasis Chlorothalonil (contoh: Daconil) atau Mancozeb. Produk sistemik seperti Azoxystrobin (contoh: Amistar Top) juga efektif.'
+                medicine='Fungisida berbasis Chlorothalonil (contoh: Daconil) atau Mancozeb. Produk sistemik seperti Azoxystrobin (contoh: Amistar Top) juga efektif.',
+                type= 'jamur'
             ), Information(
                 id=3,
                 title='Tomato Late Blight',
@@ -59,7 +61,8 @@ Detail Gejala:
 Penyebab:
 - Penyebaran melalui spora yang terbawa angin dan air, terutama saat kelembapan tinggi.
                 ''',
-                medicine='Fungisida sistemik seperti Metalaxyl-M (contoh: Ridomil Gold) atau Dimethomorph (contoh: Acrobat). Kombinasikan dengan Copper Hydroxide untuk pencegahan.'
+                medicine='Fungisida sistemik seperti Metalaxyl-M (contoh: Ridomil Gold) atau Dimethomorph (contoh: Acrobat). Kombinasikan dengan Copper Hydroxide untuk pencegahan.',
+                type= 'jamur'
             ), Information(
                 id=4,
                 title='Tomato Leaf Mold',
@@ -75,7 +78,8 @@ Detail Gejala:
 Penyebab:
 - Penyebaran melalui spora udara, terutama dalam kelembapan tinggi.
                 ''',
-                medicine='Fungisida berbasis Sulfur (contoh: Thiovit Jet) atau produk seperti Tebuconazole untuk infeksi berat.'
+                medicine='Fungisida berbasis Sulfur (contoh: Thiovit Jet) atau produk seperti Tebuconazole untuk infeksi berat.',
+                type= 'jamur'
             ), Information(
                 id=5,
                 title='Tomato Septoria Leaf Spot',
@@ -91,7 +95,8 @@ Detail Gejala:
 Penyebab:
 - Jamur menyebar melalui percikan air atau sisa tanaman yang terinfeksi.
                 ''',
-                medicine='Fungisida berbasis tembaga (seperti Nordox) atau Chlorothalonil (contoh: Bravo Weather Stik). Difenoconazole juga efektif.'
+                medicine='Fungisida berbasis tembaga (seperti Nordox) atau Chlorothalonil (contoh: Bravo Weather Stik). Difenoconazole juga efektif.',
+                type= 'jamur'
             ), Information(
                 id=6,
                 title='Tomato Spider Mites',
@@ -107,7 +112,8 @@ Detail Gejala:
 Penyebab:
 - Penyebaran dipicu oleh cuaca kering dan panas.
                 ''',
-                medicine='Minyak neem (contoh: Neemix) atau insektisida berbasis Abamectin (contoh: Agrimek). Alternatif alami melibatkan pelepasan predator seperti Phytoseiulus persimilis.'
+                medicine='Minyak neem (contoh: Neemix) atau insektisida berbasis Abamectin (contoh: Agrimek). Alternatif alami melibatkan pelepasan predator seperti Phytoseiulus persimilis.',
+                type= 'hama'
             ), Information(
                 id=7,
                 title='Tomato Target Spot',
@@ -123,7 +129,8 @@ Detail Gejala:
 Penyebab:
 - Penyebaran melalui sisa tanaman atau spora yang terbawa angin.
                 ''',
-                medicine='Fungisida berbasis Mancozeb (contoh: Dithane M-45) atau Chlorothalonil (contoh: Bravo Weather Stik). Untuk infeksi berat, gunakan Fluopyram (contoh: Luna Tranquility).'
+                medicine='Fungisida berbasis Mancozeb (contoh: Dithane M-45) atau Chlorothalonil (contoh: Bravo Weather Stik). Untuk infeksi berat, gunakan Fluopyram (contoh: Luna Tranquility).',
+                type= 'jamur'
             ), Information(
                 id=8,
                 title='Tomato Tomato Yellow Leaf Curl Virus (TYLCV)',
@@ -139,7 +146,8 @@ Detail Gejala:
 Penyebab:
 - Penyebaran melalui kutu kebul atau biji yang terinfeksi.
                 ''',
-                medicine='Tidak ada obat langsung untuk virus, tetapi kutu putih (vektor virus) dapat dikendalikan menggunakan insektisida berbasis Imidacloprid atau Pyriproxyfen. Contoh produk: Confidor, Admiral.'
+                medicine='Tidak ada obat langsung untuk virus, tetapi kutu putih (vektor virus) dapat dikendalikan menggunakan insektisida berbasis Imidacloprid atau Pyriproxyfen. Contoh produk: Confidor, Admiral.',
+                type= 'virus'
             ), Information(
                 id=9,
                 title='Tomato Tomato Mosaic Virus (ToMV)',
@@ -155,7 +163,8 @@ Detail Gejala:
 Penyebab:
 - Penyebaran melalui alat yang terkontaminasi, biji, atau tangan manusia.
                 ''',
-                medicine='Tidak ada fungisida spesifik, tetapi aplikasi produk berbasis deterjen atau desinfektan (contoh: Virkon S) pada alat dan permukaan dapat membantu mencegah penyebaran.'
+                medicine='Tidak ada fungisida spesifik, tetapi aplikasi produk berbasis deterjen atau desinfektan (contoh: Virkon S) pada alat dan permukaan dapat membantu mencegah penyebaran.',
+                type= 'virus'
             )
         ]
 

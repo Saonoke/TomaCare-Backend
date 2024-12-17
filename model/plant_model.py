@@ -1,7 +1,7 @@
 from sqlmodel import SQLModel, Field, Column, VARCHAR,Enum,  Relationship
 from enumeration import penyakitEnum
 
-
+from datetime import date, datetime
 from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
@@ -16,6 +16,8 @@ class Plants(SQLModel,table = True):
     condition : str = Field(sa_column=Column("condition",Enum(penyakitEnum)))
     image_id: int | None = Field(default=None,foreign_key="images.id")
     task : list["Task"] = Relationship(back_populates="plants", cascade_delete=True)
+    created_at : date | None= Field(default_factory=lambda: datetime.now())
+    done : bool = Field(default=False)
     image: 'Images' = Relationship(back_populates='plant')
 
     

@@ -2,7 +2,7 @@ from sqlmodel import select, Session, join
 from database.repository.meta import PlantRepositoryMeta
 from model import Plants, Images
 from database.schema import PlantCreate, PlantUpdate, PlantShow, ImageResponse
-from sqlalchemy.orm import joinedload
+
 
 
 class PlantRepository(PlantRepositoryMeta):
@@ -53,6 +53,8 @@ class PlantRepository(PlantRepositoryMeta):
                id= plant.id,
                title=plant.title,
                condition=plant.condition,
+               created_at=plant.created_at,
+               done=plant.done,
                image= ImageResponse(
                    id=image.id,
                    image_path= image.image_path
@@ -62,7 +64,7 @@ class PlantRepository(PlantRepositoryMeta):
        
        return plants_with_images
     
-    
+
     
 
     
