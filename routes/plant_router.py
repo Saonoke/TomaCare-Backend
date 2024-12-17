@@ -18,9 +18,9 @@ async def create_plant(request: Request, data:PlantCreate, session:Session = Dep
 async def upload_image(request: Request,file: UploadFile,session:Session= Depends(get_session)):
     controller = PlantController(request.state.user, session)
     content = await file.read()  # Membaca file gambar ke dalam memori
-    tes =  controller.machine_learning_process(file=content)
+    result =  controller.machine_learning_process(file=content)
     
-    return tes
+    return result
 
 
 @plant_router.get('/',status_code=200)
@@ -50,8 +50,8 @@ async def create_task(data:TaskCreate, session:Session = Depends(get_session)):
     return controller.create_task(data)
 
 @plant_router.put('/task/{task_id}')
-async def update_task(task_id:int, data:TaskUpdate, session: Session= Depends(get_session)):
-    controller = PlantController(session)
+async def update_task(request: Request,task_id:int, data:TaskUpdate, session: Session= Depends(get_session)):
+    controller = PlantController(request.state.user,session)
     return controller.update_task(task_id, data)
 
 @plant_router.delete('/task/{task_id}')

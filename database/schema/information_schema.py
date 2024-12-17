@@ -5,3 +5,4 @@ class InformationResponse(BaseModel):
     title: str
     content: str
     medicine: str
+    type:str

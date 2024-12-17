@@ -10,8 +10,8 @@ from controllers.base_controller import BaseController
 class PlantController(BaseController):
     
     def __init__(self, user: Users, session:Session):
+        self._task_service : TaskServiceMeta = TaskService(user, session)
         self._plant_service : PlantServiceMeta = PlantService(user, session)
-        self._task_service : TaskServiceMeta = TaskService(session)
         self._machine_learning_service : MachinelearningMeta = MachineLearningService()
 
 
@@ -57,6 +57,7 @@ class PlantController(BaseController):
         
     def update_task(self,task_id:int, data:TaskUpdate):
         try:
+            
             return self._task_service.update_task(data,task_id)
         except Exception as e:
             raise self.ise(e)

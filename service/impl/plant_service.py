@@ -17,7 +17,7 @@ class PlantService(PlantServiceMeta):
         self._plant_repository : PlantRepositoryMeta = PlantRepository(self.session)
         self._user: Users = user
         self._image_repository :ImageRepositoryMeta = ImageRepository(self.session)
-        self._task_service: TaskServiceMeta = TaskService(self.session)
+        self._task_service: TaskServiceMeta = TaskService(user,session)
         
 
     def create_plant(self, data: PlantCreate) :
@@ -44,6 +44,8 @@ class PlantService(PlantServiceMeta):
     def show_all_plant(self) -> list[PlantShow]:
         try:
             plant = self._plant_repository.getAll(self._user.id)
+            
+
         except Exception as e:
             raise e
         return plant

@@ -48,7 +48,7 @@ class MachineLearningService(MachinelearningMeta):
 
         check = self.check_dauntomat(img_resized)
 
-          # Jika > 30% dari gambar adalah hijau, mungkin dau
+ 
 
         if check :
             interpreter = tf.lite.Interpreter(model_path="converted_model.tflite")

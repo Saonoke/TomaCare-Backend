@@ -5,15 +5,16 @@ from database.schema import TaskBase, TaskCreate, TaskShow, TaskUpdate
 from service import TaskServiceMeta
 from enumeration import penyakitEnum
 from datetime import date, timedelta
-
+from model import Users, Plants
 
     
 
 
 
 class TaskService(TaskServiceMeta):
-    def __init__(self,session:Session) :
+    def __init__(self, user: Users, session:Session) :
         self.session = session
+        self.user: Users = user
         self._task_repository : TaskRepositoryMeta = TaskRepository(self.session)
 
     def get_list(self,penyakit:penyakitEnum)-> list[TaskShow]:
@@ -149,8 +150,11 @@ class TaskService(TaskServiceMeta):
     
     def update_task(self,  data: TaskUpdate,task_id: int):
         try:
-            print(data)
-            task = self._task_repository.update(data,task_id)
+            
+            plant = self.session.get(Plants,task_id)
+            if(plant.user_id != self.user.id):
+                raise HTTPException(status_code=404, detail="ID not found")
+            task = self._task_repository.update(data,data.id)
             if not task:
                 raise HTTPException(status_code=404, detail="Task not found")
         except Exception as e:
