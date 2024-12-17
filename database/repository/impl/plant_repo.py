@@ -18,19 +18,20 @@ class PlantRepository(PlantRepositoryMeta):
     def update(self,model: PlantUpdate,_id:int) -> Plants:
         plant = self.session.get(Plants,_id)
         if not plant:
-            return None    
+            return None
         plant_data = model.model_dump(exclude_unset=True)
         plant.sqlmodel_update(plant_data)
         self.session.add(plant)
+        self.session.commit()
         self.session.flush()
         return plant
-    
-            
+
+
     def show(self,_id:int):
         plant = self.session.get(Plants,_id)
         if not plant:
             return None
-        
+
         return plant
 
     def delete(self,_id:int):
@@ -41,7 +42,7 @@ class PlantRepository(PlantRepositoryMeta):
         self.session.commit()
         return plant
 
-    
+
     def getAll(self, _user_id: int):
        plants = self.session.exec(select(Plants, Images).join(Images).where(Plants.user_id == _user_id)).all()
        if not plants:
@@ -61,24 +62,5 @@ class PlantRepository(PlantRepositoryMeta):
                )
            )
         )
-       
+
        return plants_with_images
-    
-
-    
-
-    
-    
-        
-
-       
-
-        
-
-    
-
-        
-
-        
-
-     

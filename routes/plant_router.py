@@ -19,7 +19,7 @@ async def upload_image(request: Request,file: UploadFile,session:Session= Depend
     controller = PlantController(request.state.user, session)
     content = await file.read()  # Membaca file gambar ke dalam memori
     result =  controller.machine_learning_process(file=content)
-    
+
     return result
 
 
@@ -32,8 +32,8 @@ async def get_plant_all(request: Request, session:Session = Depends(get_session)
 async def show_plan(request: Request, plant_id:int, session:Session = Depends(get_session)):
     controller = PlantController(request.state.user, session)
     return controller.show_plan_with_task(plant_id)
-  
-@plant_router.delete('/{plant_id}',response_model=PlantShow)
+
+@plant_router.delete('/{plant_id}')
 async def delete_plan(request: Request, plant_id:int, session:Session = Depends(get_session)):
     controller = PlantController(request.state.user, session)
     return controller.delete_plan(plant_id)
@@ -58,6 +58,3 @@ async def update_task(request: Request,task_id:int, data:TaskUpdate, session: Se
 async def delete_task(task_id:int,session:Session= Depends(get_session)):
     controller = PlantController(session)
     return controller.delete_task(task_id)
-
-
-

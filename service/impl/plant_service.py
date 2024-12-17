@@ -78,7 +78,9 @@ class PlantService(PlantServiceMeta):
                 raise e
         except Exception as e:
             raise e
-        return plant
+        return {
+            "success": True
+        }
     
     def update_plant(self, plant_id: int, data: PlantUpdate) -> PlantShow:
         try:
