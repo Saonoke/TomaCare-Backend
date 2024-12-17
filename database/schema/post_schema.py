@@ -1,4 +1,6 @@
 from enum import Enum
+from typing import Optional
+
 from pydantic import BaseModel
 
 class PostUserProfile(BaseModel):
@@ -37,6 +39,7 @@ class PostResponseGet(PostResponse):
 class PostInput(BaseModel):
     title : str
     body : str
+    image_path: Optional[str] = None
 
 class ReactionEnum(str, Enum):
     LIKE = "Like"

@@ -12,3 +12,5 @@ from database.repository.meta.reaction_repo_meta import ReactionRepositoryMeta
 from database.repository.impl.reaction_repo import ReactionRepository
 from database.repository.meta.comment_repo_meta import CommentRepositoryMeta
 from database.repository.impl.comment_repo import CommentRepository
+from database.repository.meta.token_repo_meta import TokenRepositoryMeta
+from database.repository.impl.token_repo import TokenRepository

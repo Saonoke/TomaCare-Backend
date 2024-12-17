@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Request
 from database.database import get_session
 from sqlmodel import Session
 from database.schema import UserLogin, UserRegister, Token, TokenData
@@ -11,8 +11,8 @@ from service import AuthService
 class AuthController(BaseController):
     _user_service: AuthServiceMeta
 
-    def __init__(self, session:Session = Depends(get_session()) ):
-        self._user_service: AuthServiceMeta = AuthService(session)
+    def __init__(self,request: Request, session: Session):
+        self._user_service: AuthServiceMeta = AuthService(session, request)
 
     def register(self, user: UserRegister) -> UserRegister:
         try:

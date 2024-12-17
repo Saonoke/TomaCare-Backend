@@ -2,7 +2,7 @@ import hashlib
 
 from fastapi import Request
 from fastapi.responses import JSONResponse
-from jose import JWTError, ExpiredSignatureError
+from jose import JWTError
 from sqlmodel import Session
 from starlette.middleware.base import BaseHTTPMiddleware
 from datetime import datetime, timedelta
@@ -115,9 +115,9 @@ class AuthMiddleware(BaseHTTPMiddleware):
             clear_token = self.__get_clear_token(auth_header)
             try:
                 payload = decode_token(clear_token)
-            except ExpiredSignatureError:
-                return JSONResponse(status_code=401, content={'detail': 'Signature has expired.'})
-            except JWTError:
+            except JWTError as e:
+                if str(e) == 'Signature has expired.':
+                    return JSONResponse(status_code=401, content={'detail': 'Token has expired.'})
                 return JSONResponse(status_code=401, content={'detail': 'Invalid token!'})
 
             # Validasi tipe token

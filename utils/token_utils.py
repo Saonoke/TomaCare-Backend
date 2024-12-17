@@ -18,7 +18,7 @@ from model import IssuedAccessToken, IssuedRefreshToken
 
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='users/token')
 
-def create_access_token(token_data: TokenData, exp_delta: timedelta, session: Session):
+def create_access_token(token_data: TokenData, exp_delta: timedelta, device_id: str, session: Session):
     jti = str(uuid.uuid4())
     data = {
         'jti': jti,
@@ -32,6 +32,7 @@ def create_access_token(token_data: TokenData, exp_delta: timedelta, session: Se
     session.add(IssuedAccessToken(
         jti=jti,
         user_id=token_data.id,
+        device_id=device_id,
         exp=exp.timestamp(),
         status=True
     ))
@@ -41,15 +42,16 @@ def create_access_token(token_data: TokenData, exp_delta: timedelta, session: Se
 def clear_exp_issued_token(sess: Session):
     current_ts = int(datetime.now(UTC).timestamp())
     stm = select(IssuedAccessToken).where(IssuedAccessToken.exp < current_ts)
-    tokens_to_delete = sess.exec(stm).all()
-    if tokens_to_delete:
-        for token in tokens_to_delete:
+    access_tokens_to_delete = sess.exec(stm).all()
+    if access_tokens_to_delete:
+        for token in access_tokens_to_delete:
             sess.delete(token)
     stm = select(IssuedRefreshToken).where(IssuedRefreshToken.exp < current_ts)
-    tokens_to_delete = sess.exec(stm).all()
-    if tokens_to_delete:
-        for token in tokens_to_delete:
+    refresh_tokens_to_delete = sess.exec(stm).all()
+    if refresh_tokens_to_delete:
+        for token in refresh_tokens_to_delete:
             sess.delete(token)
+    sess.commit()
 
 def is_login(sess: Session, jti: str) -> bool:
     token: IssuedAccessToken|None = sess.get(IssuedAccessToken, jti)
@@ -57,7 +59,7 @@ def is_login(sess: Session, jti: str) -> bool:
         return True
     return False
 
-def create_refresh_token(token_data: TokenData, exp_delta: timedelta, sess: Session):
+def create_refresh_token(token_data: TokenData, exp_delta: timedelta, device_id: str, sess: Session):
     jti = str(uuid.uuid4())
     data = {
         'jti': jti,
@@ -71,6 +73,7 @@ def create_refresh_token(token_data: TokenData, exp_delta: timedelta, sess: Sess
     sess.add(IssuedRefreshToken(
         jti=jti,
         user_id=token_data.id,
+        device_id=device_id,
         exp=exp.timestamp(),
         revoked=False
     ))
