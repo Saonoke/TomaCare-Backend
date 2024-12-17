@@ -15,8 +15,5 @@ class PlantShow(PlantBase):
     id:int
     image:ImageResponse
 
-class PlantUpdate(PlantBase):
-    pass
-
-
-    
+class PlantUpdate(BaseModel):
+    title: str
