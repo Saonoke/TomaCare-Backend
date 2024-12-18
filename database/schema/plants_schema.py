@@ -16,4 +16,5 @@ class PlantShow(PlantBase):
     image:ImageResponse
 
 class PlantUpdate(BaseModel):
-    title: str
+    title: str 
+    done : bool | None = None
