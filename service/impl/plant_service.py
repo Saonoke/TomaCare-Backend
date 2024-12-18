@@ -87,6 +87,7 @@ class PlantService(PlantServiceMeta):
             plant = self._plant_repository.show(plant_id)
             if plant and (plant.user_id != self._user.id):
                 raise HTTPException(status_code= 403, detail="Forbidden: You do not have access to this plant")
+            print(data)
             plant = self._plant_repository.update(data, plant_id)
             if not plant:
                 raise HTTPException(status_code= 404,detail="Item Not Found")
